@@ -1,0 +1,259 @@
+############################################################################
+
+# Created by: Prof. Valdecy Pereira, D.Sc.
+# UFF - Universidade Federal Fluminense (Brazil)
+# email:  valdecy.pereira@gmail.com
+# Course: Metaheuristics
+# Lesson: NSGA-III
+
+# Citation: 
+# PEREIRA, V. (2021). Project: Metaheuristic-NSGA-III, File: Python-MH-NSGA-III.py, GitHub repository: <https://github.com/Valdecy/Metaheuristic-NSGA-III>
+
+############################################################################
+
+# Required Libraries
+import copy
+import numpy  as np
+import math
+import matplotlib.pyplot as plt
+import random
+import os
+
+# Function 1
+def func_1():
+    return
+
+# Function 2
+def func_2():
+    return
+
+# Function: Initialize Variables
+def initial_population(population_size = 5, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2]):
+    population = np.zeros((population_size, len(min_values) + len(list_of_functions)))
+    for i in range(0, population_size):
+        for j in range(0, len(min_values)):
+             population[i,j] = random.uniform(min_values[j], max_values[j])      
+        for k in range (1, len(list_of_functions) + 1):
+            population[i,-k] = list_of_functions[-k](list(population[i,0:population.shape[1]-len(list_of_functions)]))
+    return population
+
+# Function: Dominance
+def dominance_function(solution_1, solution_2, number_of_functions = 2):
+    count = 0
+    dominance = True
+    for k in range (1, number_of_functions + 1):
+        if (solution_1[-k] <= solution_2[-k]):
+            count = count + 1
+    if (count == number_of_functions):
+        dominance = True
+    else:
+        dominance = False       
+    return dominance
+
+# Function: Fast Non-Dominated Sorting
+def fast_non_dominated_sorting(population, number_of_functions = 2):
+    S     = [[] for i in range(0, population.shape[0])]
+    front = [[]]
+    n     = [0 for i in range(0, population.shape[0])]
+    rank  = [0 for i in range(0, population.shape[0])]
+    for p in range(0, population.shape[0]):
+        S[p] = []
+        n[p] = 0
+        for q in range(0, population.shape[0]):
+            if dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions):
+                if (q not in S[p]):
+                    S[p].append(q)
+            elif dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions):
+                n[p] = n[p] + 1
+        if (n[p] == 0):
+            rank[p] = 0
+            if (p not in front[0]):
+                front[0].append(p)
+    i = 0
+    while(front[i] != []):
+        Q = []
+        for p in front[i]:
+            for q in S[p]:
+                n[q] = n[q] - 1
+                if(n[q] == 0):
+                    rank[q] = i+1
+                    if q not in Q:
+                        Q.append(q)
+        i = i+1
+        front.append(Q)
+    del front[len(front)-1]
+    rank = np.zeros((population.shape[0], 1))
+    for i in range(0, len(front)):
+        for j in range(0, len(front[i])):
+            rank[front[i][j], 0] = i + 1
+    return rank
+
+# Function: n-Simplex Projection Sort
+def projection_simplex_sort(v, z = 1):
+    u     = np.sort(v)[::-1]
+    cssv  = np.cumsum(u) - z
+    ind   = np.arange(v.shape[0]) + 1
+    cond  = u - cssv / ind > 0
+    rho   = ind [cond][-1]
+    theta = cssv[cond][-1] / float(rho)
+    w     = np.maximum(v - theta, 0)
+    return w
+
+# Function: Reference Points
+def reference_points(M, rp):
+    def generator(r_points, M, Q, T, D):
+        points = []
+        if (D == M - 1):
+            r_points[D] = Q / T
+            points.append(r_points)
+        elif (D != M - 1):
+            for i in range(Q + 1):
+                r_points[D] = i / T
+                points.extend(generator(r_points.copy(), M, Q - i, T, D + 1))
+        return points
+    ref_points = np.array(generator(np.zeros(M), M, rp, rp, 0))
+    return ref_points
+
+# Function: Sort Population by Rank
+def sort_population_by_rank(population, rank):
+    idx            = np.argsort(rank, axis = 0)
+    rank_new       = np.zeros((population.shape[0], 1))
+    population_new = np.zeros((population.shape[0], population.shape[1]))  
+    for i in range(0, population.shape[0]):
+        rank_new[i, 0] = rank[idx[i], 0] 
+        for k in range(0, population.shape[1]):
+            population_new[i,k] = population[idx[i],k]
+    return population_new, rank_new
+
+# Function: Neighbour Sorting
+def neighbour_sorting(population, rank, column = 0, index_value = 1, value = 0):
+    sorted_population = np.copy(population)
+    for  i in range(rank.shape[0] -1, 0, -1):
+        if (rank[i, 0] != index_value):
+            sorted_population = np.delete(sorted_population, i, 0)
+    sorted_population_ordered = (sorted_population[sorted_population[: ,column].argsort()])
+    value_lower = float("inf")
+    value_upper = float("inf")
+    for i in range(0, sorted_population_ordered.shape[0]):
+        if (sorted_population_ordered[i, column] == value and sorted_population_ordered.shape[0] > 2):
+            if (i == 0):
+                value_lower = float("inf")
+                value_upper = sorted_population_ordered[i+1, column] 
+                break
+            elif (i == sorted_population_ordered.shape[0] - 1):
+                value_lower = sorted_population_ordered[i-1, column]
+                value_upper = float("inf")
+                break
+            else:
+                value_lower = sorted_population_ordered[i-1, column]
+                value_upper = sorted_population_ordered[i+1, column]  
+                break
+    return value_lower, value_upper
+
+# Function: Offspring
+def breeding(population, rank, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
+    offspring = np.copy(population)
+    parent_1 = 0
+    parent_2 = 1
+    b_offspring = 0
+    for i in range (0, offspring.shape[0]):
+        i1, i2, i3, i4 = random.sample(range(0, len(population) - 1), 4)
+        rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+        if (rand > 0.5):
+            parent_1 = i1
+        else:
+            parent_1 = i2
+        rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+        if (rand > 0.5):
+            parent_2 = i3
+        else:
+            parent_2 = i4
+        for j in range(0, offspring.shape[1] - len(list_of_functions)):
+            rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+            rand_b = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)                                
+            if (rand <= 0.5):
+                b_offspring = 2*(rand_b)
+                b_offspring = b_offspring**(1/(mu + 1))
+            elif (rand > 0.5):  
+                b_offspring = 1/(2*(1 - rand_b))
+                b_offspring = b_offspring**(1/(mu + 1))       
+            offspring[i,j] = np.clip(((1 + b_offspring)*population[parent_1, j] + (1 - b_offspring)*population[parent_2, j])/2, min_values[j], max_values[j])           
+            if(i < population.shape[0] - 1):   
+                offspring[i+1,j] = np.clip(((1 - b_offspring)*population[parent_1, j] + (1 + b_offspring)*population[parent_2, j])/2, min_values[j], max_values[j]) 
+        for k in range (1, len(list_of_functions) + 1):
+            offspring[i,-k] = list_of_functions[-k](offspring[i,0:offspring.shape[1]-len(list_of_functions)])
+    return offspring 
+
+# Function: Mutation
+def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2]):
+    d_mutation = 0            
+    for i in range (0, offspring.shape[0]):
+        for j in range(0, offspring.shape[1] - len(list_of_functions)):
+            probability = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+            if (probability < mutation_rate):
+                rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+                rand_d = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)                                     
+                if (rand <= 0.5):
+                    d_mutation = 2*(rand_d)
+                    d_mutation = d_mutation**(1/(eta + 1)) - 1
+                elif (rand > 0.5):  
+                    d_mutation = 2*(1 - rand_d)
+                    d_mutation = 1 - d_mutation**(1/(eta + 1))                
+                offspring[i,j] = np.clip((offspring[i,j] + d_mutation), min_values[j], max_values[j])                        
+        for k in range (1, len(list_of_functions) + 1):
+            offspring[i,-k] = list_of_functions[-k](offspring[i,0:offspring.shape[1]-len(list_of_functions)])
+    return offspring 
+
+# Function: Normalize Objective Functions
+def normalization(population, number_of_functions):
+    M     = number_of_functions
+    z_min = np.min(population[:,-M:], axis = 0)
+    z_max = np.max(population[:,-M:], axis = 0)
+    population[:,-M:] = np.apply_along_axis(projection_simplex_sort, 1, (population[:,-M:]-z_min)/(z_max - z_min) )
+    return population
+
+# Function: Association
+def association(srp, population, number_of_functions):
+    p = copy.deepcopy(population)
+    p = normalization(p, number_of_functions)
+    M = number_of_functions
+    a = np.vstack([srp, p[:,-M:]])
+    b = a.reshape(np.prod(a.shape[:-1]), 1, a.shape[-1])
+    d = np.sqrt(np.einsum('ijk,ijk->ij',  b - a,  b - a)).squeeze()
+    np.fill_diagonal(d, float('+inf'))
+    d = np.delete(d, np.s_[:srp.shape[0]], axis = 1) 
+    idx = np.argmin(d, axis = 1).reshape((d.shape[0], 1))
+    idx = idx[:srp.shape[0],:] 
+    return idx
+
+# Function: Sort Population by Association
+def sort_population_by_association(srp, population, rank, number_of_functions):
+    idx = np.unique(association(srp, population, number_of_functions)).tolist()
+    idx.extend ([x for x in list(range(0, population.shape[0])) if x not in idx])
+    population = population[idx, :]
+    rank       = rank[idx, :]
+    return population, rank
+
+# NSGA III Function
+def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1):       
+    count = 0   
+    M     = len(list_of_functions)
+    d     = references
+    rp    = int(math.factorial(M + d - 1)/(math.factorial( d )*(math.factorial( M - 1 ))))
+    srp   = reference_points(M = M, rp = rp)
+    population_size = references*4 
+    population = initial_population(population_size, min_values, max_values, list_of_functions)  
+    offspring  = initial_population(population_size, min_values, max_values, list_of_functions)  
+    while (count <= generations):       
+        print("Generation = ", count)
+        population       = np.vstack([population, offspring])
+        rank             = fast_non_dominated_sorting(population, number_of_functions = M)
+        population, rank = sort_population_by_rank(population, rank)
+        population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
+        population, rank = population[0:population_size,:], rank[0:population_size,:] 
+        rank             = fast_non_dominated_sorting(population, number_of_functions = M)
+        population, rank = sort_population_by_rank(population, rank)
+        offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
+        offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
+        count            = count + 1              
+    return population
