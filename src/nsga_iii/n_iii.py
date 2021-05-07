@@ -7,7 +7,7 @@
 # Lesson: NSGA-III
 
 # Citation: 
-# PEREIRA, V. (2021). Project: Metaheuristic-NSGA-III, File: Python-MH-NSGA-III.py, GitHub repository: <https://github.com/Valdecy/Metaheuristic-NSGA-III>
+# PEREIRA, V. (2021). Project: pyMultiojective, File: n_iii.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
@@ -15,9 +15,10 @@
 import copy
 import numpy  as np
 import math
-import matplotlib.pyplot as plt
 import random
 import os
+
+############################################################################
 
 # Function 1
 def func_1():
@@ -26,6 +27,8 @@ def func_1():
 # Function 2
 def func_2():
     return
+
+############################################################################
 
 # Function: Initialize Variables
 def initial_population(population_size = 5, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2]):
@@ -39,7 +42,7 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
 
 # Function: Dominance
 def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count = 0
+    count     = 0
     dominance = True
     for k in range (1, number_of_functions + 1):
         if (solution_1[-k] <= solution_2[-k]):
@@ -88,32 +91,6 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
             rank[front[i][j], 0] = i + 1
     return rank
 
-# Function: n-Simplex Projection Sort
-def projection_simplex_sort(v, z = 1):
-    u     = np.sort(v)[::-1]
-    cssv  = np.cumsum(u) - z
-    ind   = np.arange(v.shape[0]) + 1
-    cond  = u - cssv / ind > 0
-    rho   = ind [cond][-1]
-    theta = cssv[cond][-1] / float(rho)
-    w     = np.maximum(v - theta, 0)
-    return w
-
-# Function: Reference Points
-def reference_points(M, rp):
-    def generator(r_points, M, Q, T, D):
-        points = []
-        if (D == M - 1):
-            r_points[D] = Q / T
-            points.append(r_points)
-        elif (D != M - 1):
-            for i in range(Q + 1):
-                r_points[D] = i / T
-                points.extend(generator(r_points.copy(), M, Q - i, T, D + 1))
-        return points
-    ref_points = np.array(generator(np.zeros(M), M, rp, rp, 0))
-    return ref_points
-
 # Function: Sort Population by Rank
 def sort_population_by_rank(population, rank):
     idx            = np.argsort(rank, axis = 0)
@@ -152,9 +129,9 @@ def neighbour_sorting(population, rank, column = 0, index_value = 1, value = 0):
 
 # Function: Offspring
 def breeding(population, rank, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
-    offspring = np.copy(population)
-    parent_1 = 0
-    parent_2 = 1
+    offspring   = np.copy(population)
+    parent_1    = 0
+    parent_2    = 1
     b_offspring = 0
     for i in range (0, offspring.shape[0]):
         i1, i2, i3, i4 = random.sample(range(0, len(population) - 1), 4)
@@ -204,6 +181,34 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
             offspring[i,-k] = list_of_functions[-k](offspring[i,0:offspring.shape[1]-len(list_of_functions)])
     return offspring 
 
+############################################################################
+
+# Function: n-Simplex Projection Sort
+def projection_simplex_sort(v, z = 1):
+    u     = np.sort(v)[::-1]
+    cssv  = np.cumsum(u) - z
+    ind   = np.arange(v.shape[0]) + 1
+    cond  = u - cssv / ind > 0
+    rho   = ind [cond][-1]
+    theta = cssv[cond][-1] / float(rho)
+    w     = np.maximum(v - theta, 0)
+    return w
+
+# Function: Reference Points
+def reference_points(M, rp):
+    def generator(r_points, M, Q, T, D):
+        points = []
+        if (D == M - 1):
+            r_points[D] = Q / T
+            points.append(r_points)
+        elif (D != M - 1):
+            for i in range(Q + 1):
+                r_points[D] = i / T
+                points.extend(generator(r_points.copy(), M, Q - i, T, D + 1))
+        return points
+    ref_points = np.array(generator(np.zeros(M), M, rp, rp, 0))
+    return ref_points
+
 # Function: Normalize Objective Functions
 def normalization(population, number_of_functions):
     M     = number_of_functions
@@ -217,22 +222,23 @@ def association(srp, population, number_of_functions):
     p = copy.deepcopy(population)
     p = normalization(p, number_of_functions)
     M = number_of_functions
-    a = np.vstack([srp, p[:,-M:]])
-    b = a.reshape(np.prod(a.shape[:-1]), 1, a.shape[-1])
+    a = p[:,-M:].reshape(np.prod(p[:,-M:].shape[:-1]), 1, p[:,-M:].shape[-1])
+    b = srp
     d = np.sqrt(np.einsum('ijk,ijk->ij',  b - a,  b - a)).squeeze()
-    np.fill_diagonal(d, float('+inf'))
-    d = np.delete(d, np.s_[:srp.shape[0]], axis = 1) 
+    d = d.T
     idx = np.argmin(d, axis = 1).reshape((d.shape[0], 1))
-    idx = idx[:srp.shape[0],:] 
     return idx
 
 # Function: Sort Population by Association
 def sort_population_by_association(srp, population, rank, number_of_functions):
-    idx = np.unique(association(srp, population, number_of_functions)).tolist()
-    idx.extend ([x for x in list(range(0, population.shape[0])) if x not in idx])
+    idx        = np.unique(association(srp, population, number_of_functions)).tolist()
+    idx        = [x for x in idx if x < int(len(population)/2)]
+    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     population = population[idx, :]
     rank       = rank[idx, :]
     return population, rank
+
+############################################################################
 
 # NSGA III Function
 def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1):       
@@ -257,3 +263,5 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
     return population
+
+############################################################################
