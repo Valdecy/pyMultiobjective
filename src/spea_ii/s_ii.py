@@ -7,7 +7,7 @@
 # Lesson: Strength Pareto Evolutionary Algorithm 2
 
 # Citation: 
-# PEREIRA, V. (2018). Project: Metaheuristic-SPEA-2, File: Python-MH-SPEA-2.py, GitHub repository: <https://github.com/Valdecy/Metaheuristic-SPEA-2>
+# PEREIRA, V. (2021). Project: pyMultiojective, File: n_iii.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
