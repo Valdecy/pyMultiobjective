@@ -210,7 +210,8 @@ def point_to_line(p1, p2, p3):
     dp = np.dot(p3, p2)
     pp = dp/np.linalg.norm(p2)
     pn = np.linalg.norm(p3, axis = 1)
-    return np.sqrt(pn**2 - pp**2)
+    dl = np.sqrt(pn**2 - pp**2)
+    return dl
 
 # Function: Association
 def association(srp, population, number_of_functions):
@@ -229,14 +230,14 @@ def association(srp, population, number_of_functions):
             arg = np.argmin(g[i,:])
             idx.append(arg)
             g[:,idx] = float('+inf')
-    return idx[:p.shape[0]]
+    idx = idx[:srp.shape[0]]
+    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
+    return idx
 
 # Function: Sort Population by Association
 def sort_population_by_association(srp, population, rank, number_of_functions):
     M          = number_of_functions
     idx        = association(srp, population, M)
-    idx        = idx[:srp.shape[0]]
-    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     population = population[idx, :]
     rank       = rank[idx, :]
     return population, rank
@@ -262,6 +263,7 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
         offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
+    population = population[0:references,:] 
     return population
 
 ############################################################################
