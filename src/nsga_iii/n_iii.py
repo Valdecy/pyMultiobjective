@@ -201,6 +201,14 @@ def normalization(population, number_of_functions):
     population[:,-M:] = population[:,-M:] /(a - z_min)
     return population
 
+# Function: Distance from point (p3) to a Line (p1, p2)   
+def point_to_line(p1, p2, p3):
+    p2 = p2 - p1
+    dp = np.dot(p3, p2)
+    pp = dp/np.linalg.norm(p2)
+    pn = np.linalg.norm(p3.reshape((1, p3.shape[0])), axis = 1)
+    return np.sqrt(pn**2 - pp**2)
+
 # Function: Association
 def association(srp, population, number_of_functions):
     M  = number_of_functions
@@ -211,8 +219,8 @@ def association(srp, population, number_of_functions):
     for i in range(0, srp.shape[0]):
         p2 = srp[i,:]
         for j in range(0, p.shape[0]):
-            p3     = p[j,-M:]
-            g[i,j] = np.abs(np.linalg.norm(np.cross(p2-p1, p1-p3))/np.linalg.norm(p2-p1))
+            p3     = p[:,-M:]
+            g[i,j] = point_to_line(p1, p2, p3)
     idx = []
     for _ in range(0, 4):
         for i in range(0, g.shape[0]):
