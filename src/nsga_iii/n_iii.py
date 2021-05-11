@@ -15,6 +15,7 @@
 import copy
 import numpy  as np
 import math
+import matplotlib.pyplot as plt
 import random
 import os
 
@@ -63,10 +64,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
         S[p] = []
         n[p] = 0
         for q in range(0, population.shape[0]):
-            if dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions):
+            if (dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions)):
                 if (q not in S[p]):
                     S[p].append(q)
-            elif dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions):
+            elif (dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions)):
                 n[p] = n[p] + 1
         if (n[p] == 0):
             rank[p] = 0
@@ -101,31 +102,6 @@ def sort_population_by_rank(population, rank):
         for k in range(0, population.shape[1]):
             population_new[i,k] = population[idx[i],k]
     return population_new, rank_new
-
-# Function: Neighbour Sorting
-def neighbour_sorting(population, rank, column = 0, index_value = 1, value = 0):
-    sorted_population = np.copy(population)
-    for  i in range(rank.shape[0] -1, 0, -1):
-        if (rank[i, 0] != index_value):
-            sorted_population = np.delete(sorted_population, i, 0)
-    sorted_population_ordered = (sorted_population[sorted_population[: ,column].argsort()])
-    value_lower = float("inf")
-    value_upper = float("inf")
-    for i in range(0, sorted_population_ordered.shape[0]):
-        if (sorted_population_ordered[i, column] == value and sorted_population_ordered.shape[0] > 2):
-            if (i == 0):
-                value_lower = float("inf")
-                value_upper = sorted_population_ordered[i+1, column] 
-                break
-            elif (i == sorted_population_ordered.shape[0] - 1):
-                value_lower = sorted_population_ordered[i-1, column]
-                value_upper = float("inf")
-                break
-            else:
-                value_lower = sorted_population_ordered[i-1, column]
-                value_upper = sorted_population_ordered[i+1, column]  
-                break
-    return value_lower, value_upper
 
 # Function: Offspring
 def breeding(population, rank, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
@@ -195,7 +171,7 @@ def projection_simplex_sort(v, z = 1):
     return w
 
 # Function: Reference Points
-def reference_points(M, rp):
+def reference_points(M, p):
     def generator(r_points, M, Q, T, D):
         points = []
         if (D == M - 1):
@@ -206,62 +182,53 @@ def reference_points(M, rp):
                 r_points[D] = i / T
                 points.extend(generator(r_points.copy(), M, Q - i, T, D + 1))
         return points
-    ref_points = np.array(generator(np.zeros(M), M, rp, rp, 0))
+    ref_points = np.array(generator(np.zeros(M), M, p, p, 0))
     return ref_points
 
 # Function: Normalize Objective Functions
 def normalization(population, number_of_functions):
-    M     = number_of_functions
-    z_min = np.min(population[:,-M:], axis = 0)
-    z_max = np.max(population[:,-M:], axis = 0)
-    population[:,-M:] = np.apply_along_axis(projection_simplex_sort, 1, (population[:,-M:]-z_min)/(z_max - z_min) )
+    M                 = number_of_functions
+    z_min             = np.min(population[:,-M:], axis = 0)
+    population[:,-M:] = population[:,-M:] - z_min
+    z_max             = np.argmax(population[:,-M:], axis = 0).tolist()
+    if ( len(z_max) != len(set(z_max))):
+        a     = np.max(population[:,-M:], axis = 0)
+    else:
+        k     = np.ones((M, 1))
+        z_max = np.vstack((population[z_max,-M:]))
+        a     = np.matrix.dot(np.linalg.inv(z_max), k)
+        a     = (1/a).reshape(1, M)
+    population[:,-M:] = population[:,-M:] /(a - z_min)
     return population
 
 # Function: Association
 def association(srp, population, number_of_functions):
-    p = copy.deepcopy(population)
-    p = normalization(p, number_of_functions)
-    M = number_of_functions
-    a = p[:,-M:].reshape(np.prod(p[:,-M:].shape[:-1]), 1, p[:,-M:].shape[-1])
-    b = srp
-    d = np.sqrt(np.einsum('ijk,ijk->ij',  b - a,  b - a)).squeeze()
-    d = d.T
-    idx = np.argmin(d, axis = 1).reshape((d.shape[0], 1))
-    return idx
+    M  = number_of_functions
+    p  = copy.deepcopy(population)
+    p  = normalization(p, M)
+    p1 = np.zeros((1, M))
+    g  = np.zeros((srp.shape[0], p.shape[0]), dtype = float)
+    for i in range(0, srp.shape[0]):
+        p2 = srp[i,:]
+        for j in range(0, p.shape[0]):
+            p3     = p[j,-M:]
+            g[i,j] = np.abs(np.linalg.norm(np.cross(p2-p1, p1-p3))/np.linalg.norm(p2-p1))
+    idx = []
+    for _ in range(0, 4):
+        for i in range(0, g.shape[0]):
+            arg = np.argmin(g[i,:])
+            idx.append(arg)
+            g[:,idx] = float('+inf')
+    return idx[:p.shape[0]]
 
 # Function: Sort Population by Association
 def sort_population_by_association(srp, population, rank, number_of_functions):
-    idx        = np.unique(association(srp, population, number_of_functions)).tolist()
-    idx        = [x for x in idx if x < int(len(population)/2)]
+    M          = number_of_functions
+    idx        = association(srp, population, M)
+    idx        = idx[:srp.shape[0]]
     idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     population = population[idx, :]
     rank       = rank[idx, :]
     return population, rank
-
-############################################################################
-
-# NSGA III Function
-def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1):       
-    count = 0   
-    M     = len(list_of_functions)
-    d     = references
-    rp    = int(math.factorial(M + d - 1)/(math.factorial( d )*(math.factorial( M - 1 ))))
-    srp   = reference_points(M = M, rp = rp)
-    population_size = references*4 
-    population = initial_population(population_size, min_values, max_values, list_of_functions)  
-    offspring  = initial_population(population_size, min_values, max_values, list_of_functions)  
-    while (count <= generations):       
-        print("Generation = ", count)
-        population       = np.vstack([population, offspring])
-        rank             = fast_non_dominated_sorting(population, number_of_functions = M)
-        population, rank = sort_population_by_rank(population, rank)
-        population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
-        population, rank = population[0:population_size,:], rank[0:population_size,:] 
-        rank             = fast_non_dominated_sorting(population, number_of_functions = M)
-        population, rank = sort_population_by_rank(population, rank)
-        offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
-        offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
-        count            = count + 1              
-    return population
 
 ############################################################################
