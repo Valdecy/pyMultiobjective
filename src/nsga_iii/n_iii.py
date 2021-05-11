@@ -219,7 +219,7 @@ def association(srp, population, number_of_functions):
     for i in range(0, srp.shape[0]):
         p2 = srp[i,:]
         for j in range(0, p.shape[0]):
-            p3     = p[:,-M:]
+            p3     = p[j,-M:]
             g[i,j] = point_to_line(p1, p2, p3)
     idx = []
     for _ in range(0, 4):
