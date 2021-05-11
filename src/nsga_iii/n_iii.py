@@ -201,7 +201,7 @@ def normalization(population, number_of_functions):
     population[:,-M:] = population[:,-M:] /(a - z_min)
     return population
 
-# Function: Distance from point (p3) to a Line (p1, p2)   
+# Function: Distance from Point (p3) to a Line (p1, p2)   
 def point_to_line(p1, p2, p3):
     p1 = np.squeeze(p1)
     p2 = np.squeeze(p2)
