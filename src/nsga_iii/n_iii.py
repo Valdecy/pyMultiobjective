@@ -203,9 +203,6 @@ def normalization(population, number_of_functions):
 
 # Function: Distance from Point (p3) to a Line (p1, p2)   
 def point_to_line(p1, p2, p3):
-    p1 = np.squeeze(p1)
-    p2 = np.squeeze(p2)
-    p3 = np.squeeze(p3)
     p2 = p2 - p1
     dp = np.dot(p3, p2.T)
     pp = dp/np.linalg.norm(p2.T, axis = 0)
