@@ -260,7 +260,8 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
         offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
-    population = population[0:srp.shape[0],:]  
+    population, _ = sort_population_by_association(srp, population, rank, number_of_functions = M)
+    population    = population[0:srp.shape[0],:]  
     return population
 
 ############################################################################
