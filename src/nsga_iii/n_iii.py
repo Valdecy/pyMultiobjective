@@ -246,7 +246,7 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
     count      = 0
     references = max(2, references)
     M          = len(list_of_functions)
-    srp        = reference_points(M = M, p = references-1)
+    srp        = reference_points(M = M, p = references)
     size       = 4*references
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
