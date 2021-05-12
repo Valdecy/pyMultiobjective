@@ -213,6 +213,7 @@ def point_to_line(p1, p2, p3):
     return dl
 
 # Function: Association
+# Function: Association
 def association(srp, population, number_of_functions):
     M   = number_of_functions
     p   = copy.deepcopy(population)
@@ -222,22 +223,33 @@ def association(srp, population, number_of_functions):
     p3  = p[:,-M:]
     g   = point_to_line(p1, p2, p3)
     idx = []
-    for _ in range(0, 4):
+    d   = []
+    for k in range(0, 4):
         for i in range(0, g.shape[0]):
             arg = np.argmin(g[i,:])
+            if (k == 0):
+                d.append(g[i, arg])
             idx.append(arg)
             g[:,idx] = float('+inf')
     idx = idx[:srp.shape[0]]
     idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
-    return idx
+    return idx, d
 
 # Function: Sort Population by Association
 def sort_population_by_association(srp, population, rank, number_of_functions):
     M          = number_of_functions
-    idx        = association(srp, population, M)
+    idx, _     = association(srp, population, M)
     population = population[idx, :]
     rank       = rank[idx, :]
     return population, rank
+
+# Function: Preserve Elite Members
+def elite_members(elite, d_elite, population, d_population):
+    for i in range(0, len(d_elite)):
+        if (d_population[i] <= d_elite[i]):
+            elite[i,:] = population[i, :] 
+            d_elite[i] = d_population[i]
+    return elite, d_elite
 
 ############################################################################
 
@@ -250,18 +262,20 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
     size       = 4*references
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
+    elite      = initial_population(srp.shape[0], min_values, max_values, list_of_functions) 
+    d_elite    = [float('+inf')]*srp.shape[0]
     while (count <= generations):       
         print("Generation = ", count)
         population       = np.vstack([population, offspring])
         rank             = fast_non_dominated_sorting(population, number_of_functions = M)
         population, rank = sort_population_by_rank(population, rank)
         population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
+        _, d             = association(srp, population, M)
+        elite, d_elite   = elite_members(elite, d_elite, population, d)
         population, rank = population[0:size,:], rank[0:size,:] 
         offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
-    population, _ = sort_population_by_association(srp, population, rank, number_of_functions = M)
-    population    = population[0:srp.shape[0],:]  
-    return population
+    return elite
 
 ############################################################################
