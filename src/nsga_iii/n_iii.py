@@ -207,23 +207,23 @@ def point_to_line(p1, p2, p3):
     p2 = np.squeeze(p2)
     p3 = np.squeeze(p3)
     p2 = p2 - p1
-    dp = np.dot(p3, p2)
-    pp = dp/np.linalg.norm(p2)
+    dp = np.dot(p3, p2.T)
+    pp = dp/np.linalg.norm(p2.T, axis = 0)
     pn = np.linalg.norm(p3, axis = 1)
+    pn = np.array([pn,]*pp.shape[1]).transpose()
     dl = np.sqrt(pn**2 - pp**2)
+    dl = dl.T
     return dl
 
 # Function: Association
 def association(srp, population, number_of_functions):
-    M  = number_of_functions
-    p  = copy.deepcopy(population)
-    p  = normalization(p, M)
-    p1 = np.zeros((1, M))
-    g  = np.zeros((srp.shape[0], p.shape[0]), dtype = float)
-    for i in range(0, srp.shape[0]):
-        p2 = srp[i,:]
-        p3 = p[:,-M:]
-        g[i,:] = point_to_line(p1, p2, p3)
+    M   = number_of_functions
+    p   = copy.deepcopy(population)
+    p   = normalization(p, M)
+    p1  = np.zeros((1, M))
+    p2  = srp
+    p3  = p[:,-M:]
+    g   = point_to_line(p1, p2, p3)
     idx = []
     for _ in range(0, 4):
         for i in range(0, g.shape[0]):
