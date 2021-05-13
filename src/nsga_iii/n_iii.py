@@ -230,7 +230,7 @@ def association(srp, population, number_of_functions):
             if (k == 0):
                 d.append(g[i, arg])
             idx.append(arg)
-            g[:,idx] = float('+inf')
+            g[:,arg] = float('+inf')
     idx = idx[:srp.shape[0]]
     idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     return idx, d
