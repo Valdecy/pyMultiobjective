@@ -206,7 +206,7 @@ def normalization(population, number_of_functions):
     population[:,-M:] = population[:,-M:] /(a - z_min)
     return population
 
-# Function: Distance from Point (p3) to a Line (p1, p2)   
+# Function: Distance from Point (p3) to a Line (p1, p2).    
 def point_to_line(p1, p2, p3):
     p2 = p2 - p1
     dp = np.dot(p3, p2.T)
@@ -214,10 +214,8 @@ def point_to_line(p1, p2, p3):
     pn = np.linalg.norm(p3, axis = 1)
     pn = np.array([pn,]*pp.shape[1]).transpose()
     dl = np.sqrt(pn**2 - pp**2)
-    dl = dl.T
     return dl
 
-# Function: Association
 # Function: Association
 def association(srp, population, number_of_functions):
     M   = number_of_functions
@@ -226,35 +224,24 @@ def association(srp, population, number_of_functions):
     p1  = np.zeros((1, M))
     p2  = srp
     p3  = p[:,-M:]
-    g   = point_to_line(p1, p2, p3)
+    g   = point_to_line(p1, p2, p3) # Matrix (Population, Reference)
     idx = []
-    d   = []
-    for k in range(0, 4):
-        for i in range(0, g.shape[0]):
-            arg = np.argmin(g[i,:])
-            if (k == 0):
-                d.append(g[i, arg])
-            idx.append(arg)
-            g[:,arg] = float('+inf')
-    idx = idx[:srp.shape[0]]
+    arg = np.argmin(g, axis = 1)
+    d   = np.amin(g, axis = 1)
+    #nc  = [arg.tolist().count(i) for i in list(range(0, g.shape[1]))] # Niche Count
+    for ind in np.unique(arg).tolist():
+        f = [i[0] for i in np.argwhere(arg == ind).tolist()]
+        idx.append(f[d[f].argsort()[0]])
     idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
-    return idx, d
+    return idx
 
 # Function: Sort Population by Association
 def sort_population_by_association(srp, population, rank, number_of_functions):
     M          = number_of_functions
-    idx, _     = association(srp, population, M)
+    idx        = association(srp, population, M)
     population = population[idx, :]
     rank       = rank[idx, :]
     return population, rank
-
-# Function: Preserve Elite Members
-def elite_members(elite, d_elite, population, d_population):
-    for i in range(0, len(d_elite)):
-        if (d_population[i] <= d_elite[i]):
-            elite[i,:] = population[i, :] 
-            d_elite[i] = d_population[i]
-    return elite, d_elite
 
 ############################################################################
 
@@ -267,20 +254,16 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
     size       = 4*references
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
-    elite      = initial_population(srp.shape[0], min_values, max_values, list_of_functions) 
-    d_elite    = [float('+inf')]*srp.shape[0]
     while (count <= generations):       
         print("Generation = ", count)
         population       = np.vstack([population, offspring])
         rank             = fast_non_dominated_sorting(population, number_of_functions = M)
-        population, rank = sort_population_by_rank(population, rank)
+        population, rank = sort_population_by_rank(population, rank) 
         population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
-        _, d             = association(srp, population, M)
-        elite, d_elite   = elite_members(elite, d_elite, population, d)
         population, rank = population[0:size,:], rank[0:size,:] 
         offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
-    return elite
+    return population[ :srp.shape[0], :]
 
 ############################################################################
