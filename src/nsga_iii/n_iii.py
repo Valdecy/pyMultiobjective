@@ -246,12 +246,13 @@ def sort_population_by_association(srp, population, rank, number_of_functions):
 ############################################################################
 
 # NSGA III Function
-def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1):       
+# NSGA III Function
+def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, k = 4):       
     count      = 0
     references = max(2, references)
     M          = len(list_of_functions)
     srp        = reference_points(M = M, p = references)
-    size       = 4*references
+    size       = k*references
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
     while (count <= generations):       
