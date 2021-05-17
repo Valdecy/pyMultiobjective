@@ -254,7 +254,7 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
     size       = k*srp.shape[0]
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
-    print('Total Number of Points on Refrence Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
+    print('Total Number of Points on Reference Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
     while (count <= generations):       
         print("Generation = ", count)
         population       = np.vstack([population, offspring])
