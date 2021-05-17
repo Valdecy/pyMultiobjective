@@ -195,7 +195,7 @@ def normalization(population, number_of_functions):
     np.fill_diagonal(w, 1)
     z_max             = []
     for i in range(0, M):
-        z_max.append(np.argmax(population[:,-M:]/w[i], axis = 0).tolist()[i])
+       z_max.append(np.argmin(np.max(population[:,-M:]/w[i], axis = 1)))
     if ( len(z_max) != len(set(z_max))):
         a     = np.max(population[:,-M:], axis = 0)
     else:
