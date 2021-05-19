@@ -74,7 +74,7 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
             if (p not in front[0]):
                 front[0].append(p)
     i = 0
-    while(front[i] != []):
+    while (front[i] != []):
         Q = []
         for p in front[i]:
             for q in S[p]:
@@ -122,7 +122,7 @@ def breeding(population, rank, min_values = [-5,-5], max_values = [5,5], mu = 1,
         else:
             parent_2 = i4
         for j in range(0, offspring.shape[1] - len(list_of_functions)):
-            rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+            rand   = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
             rand_b = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)                                
             if (rand <= 0.5):
                 b_offspring = 2*(rand_b)
@@ -144,7 +144,7 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
         for j in range(0, offspring.shape[1] - len(list_of_functions)):
             probability = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
             if (probability < mutation_rate):
-                rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+                rand   = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
                 rand_d = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)                                     
                 if (rand <= 0.5):
                     d_mutation = 2*(rand_d)
