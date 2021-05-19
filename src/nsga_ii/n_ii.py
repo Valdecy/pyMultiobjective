@@ -39,7 +39,7 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
 
 # Function: Dominance
 def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count = 0
+    count     = 0
     dominance = True
     for k in range (1, number_of_functions + 1):
         if (solution_1[-k] <= solution_2[-k]):
@@ -70,7 +70,7 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
             if (p not in front[0]):
                 front[0].append(p)
     i = 0
-    while(front[i] != []):
+    while (front[i] != []):
         Q = []
         for p in front[i]:
             for q in S[p]:
