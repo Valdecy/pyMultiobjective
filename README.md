@@ -1,5 +1,5 @@
 # pyMultiobjective
-A python library for the following Multiobjective Metaheuristics: **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **SPEA II** (Strength Pareto Evolutionary Algorithm 2)
+A python library for the following Multiobjective Metaheuristics: **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **SPEA II** (Strength Pareto Evolutionary Algorithm II)
 
 
 Try it in **Colab**:
