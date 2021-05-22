@@ -190,7 +190,6 @@ def normalization(population, number_of_functions):
     M                 = number_of_functions
     z_min             = np.min(population[:,-M:], axis = 0)
     population[:,-M:] = population[:,-M:] - z_min
-    z_max             = np.argmax(population[:,-M:], axis = 0).tolist()
     w                 = np.zeros((M, M)) + 0.0000001
     np.fill_diagonal(w, 1)
     z_max             = []
