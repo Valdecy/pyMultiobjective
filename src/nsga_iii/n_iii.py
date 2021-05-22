@@ -195,7 +195,7 @@ def normalization(population, number_of_functions):
     z_max             = []
     for i in range(0, M):
        z_max.append(np.argmin(np.max(population[:,-M:]/w[i], axis = 1)))
-    if ( len(z_max) != len(set(z_max))):
+    if ( len(z_max) != len(set(z_max)) or M == 1):
         a     = np.max(population[:,-M:], axis = 0)
     else:
         k     = np.ones((M, 1))
