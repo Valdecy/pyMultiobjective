@@ -104,7 +104,7 @@ def sort_population_by_rank(population, rank):
     return population_new, rank_new
 
 # Function: Offspring
-def breeding(population, rank, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
+def breeding(population, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
     offspring   = np.copy(population)
     parent_1    = 0
     parent_2    = 1
@@ -261,7 +261,7 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
         population, rank = sort_population_by_rank(population, rank) 
         population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
         population, rank = population[0:size,:], rank[0:size,:] 
-        offspring        = breeding(population, rank, min_values, max_values, mu, list_of_functions)
+        offspring        = breeding(population, min_values, max_values, mu, list_of_functions)
         offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
         count            = count + 1              
     return population[ :srp.shape[0], :]
