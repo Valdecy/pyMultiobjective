@@ -45,7 +45,7 @@ def breeding(population, neighbours, min_values = [-5,-5], max_values = [5,5], m
     parent_2    = 1
     b_offspring = 0  
     for i in range (0, offspring.shape[0]):
-        canditates  = list(range(0, population.shape[0]))
+        canditates = list(range(0, population.shape[0]))
         canditates.remove(i)
         canditates = canditates[:neighbours]
         i1, i2, i3, i4 = random.sample(range(0, len(population) - 1), 4)
