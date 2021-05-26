@@ -114,33 +114,34 @@ def reference_points(M, p):
 
 # Function: Selection
 def selection(population, offspring, M, weights, theta):
-    z_min = np.min(np.vstack([population[:,-M:], offspring[:,-M:]]), axis = 0)
-    pbi_p = np.zeros((population.shape[0], 1))
-    pbi_o = np.zeros((population.shape[0], 1))
+    z_min      = np.min(np.vstack([population[:,-M:], offspring[:,-M:]]), axis = 0)
+    population = np.vstack([population, offspring])
+    pbi        = np.zeros((population.shape[0], weights.shape[0]))
     for i in range(0, population.shape[0]):
-        d1 = np.linalg.norm(np.dot((population[i,-M:].reshape(1, M) - z_min).T, weights[i,:].reshape(1, M) ))/np.linalg.norm(weights[i,:])
-        d2 = np.linalg.norm(population[i,-M:] - z_min - d1*(weights[i,:]/np.linalg.norm(weights[i,:])))
-        pbi_p[i,0] = d1 + theta*d2
-        d1 = np.linalg.norm(np.dot((offspring[i,-M:].reshape(1, M) - z_min).T, weights[i,:].reshape(1, M) ))/np.linalg.norm(weights[i,:])
-        d2 = np.linalg.norm(offspring[i,-M:] - z_min - d1*(weights[i,:]/np.linalg.norm(weights[i,:])))
-        pbi_o[i,0] = d1 + theta*d2
-    new_pop = np.zeros((population.shape[0], population.shape[1]))
-    for i in range(0, population.shape[0]):
-        if (pbi_p[i,0] <= pbi_o[i,0]):
-            new_pop[i,:] = population[i,:]
-        else:
-            new_pop[i,:] = offspring[i,:]
-    return new_pop
+        for j in range(0, weights.shape[0]):
+            d1       = np.linalg.norm(np.dot((population[i,-M:].reshape(1, M) - z_min).T, weights[j,:].reshape(1, M) ))/np.linalg.norm(weights[j,:])
+            d2       = np.linalg.norm(population[i,-M:] - z_min - d1*(weights[j,:]/np.linalg.norm(weights[j,:])))
+            pbi[i,j] = d1 + theta*d2
+    idx = []
+    arg = np.argmin(pbi, axis = 1)
+    d   = np.amin(pbi, axis = 1)
+    for ind in np.unique(arg).tolist():
+        f = [i[0] for i in np.argwhere(arg == ind).tolist()]
+        idx.append(f[d[f].argsort()[0]])
+    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
+    population = population[idx, :]
+    population = population[:weights.shape[0], :]
+    return population
 
 ############################################################################
 
 # MOEA/D Function
-def multiobjective_evolutionary_algorithm_based_on_decomposition(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, theta = 4):       
+def multiobjective_evolutionary_algorithm_based_on_decomposition(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, theta = 4, k = 4):       
     count      = 0
     references = max(5, references)
     M          = len(list_of_functions)
     weights    = reference_points(M = M, p = references)
-    size       = weights.shape[0]
+    size       = k*weights.shape[0]
     neighbours = max(4, int(size//10))
     population = initial_population(size, min_values, max_values, list_of_functions)   
     print(' Population Size: ', int(size))
