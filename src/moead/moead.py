@@ -144,7 +144,7 @@ def multiobjective_evolutionary_algorithm_based_on_decomposition(references = 5,
     size       = k*weights.shape[0]
     neighbours = max(4, int(size//10))
     population = initial_population(size, min_values, max_values, list_of_functions)   
-    print('Total Number of Points on Reference Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
+    print('Total Number of Points on Reference Hyperplane: ', int(weights.shape[0]), ' Population Size: ', int(size))
     while (count <= generations):       
         print('Generation = ', count)
         offspring  = breeding(population, neighbours, min_values, max_values, mu, list_of_functions)
