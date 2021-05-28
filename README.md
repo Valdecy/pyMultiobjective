@@ -1,5 +1,5 @@
 # pyMultiobjective
-A python library for the following Multiobjective Metaheuristics: **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **SPEA II** (Strength Pareto Evolutionary Algorithm II)
+A python library for the following Multiobjective Metaheuristics: **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **SPEA2** (Strength Pareto Evolutionary Algorithm II)
 
 
 Try it in **Colab**:
