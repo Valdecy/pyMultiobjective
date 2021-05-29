@@ -84,15 +84,11 @@ def fitness_calculation(population, raw_fitness, number_of_functions = 2):
     return fitness
 
 # Function: Sort Population by Fitness
-def sort_population_by_fitness(population, fitness):
-    idx            = np.argsort(fitness[:,-1])
-    fitness_new    = np.zeros((population.shape[0], 1))
-    population_new = np.zeros((population.shape[0], population.shape[1]))
-    for i in range(0, population.shape[0]):
-        fitness_new[i,0] = fitness[idx[i],0] 
-        for k in range(0, population.shape[1]):
-            population_new[i,k] = population[idx[i],k]
-    return population_new, fitness_new
+def sort_population_by_fitness_(population, fitness):
+    idx        = np.argsort(fitness[:,-1]).tolist()
+    fitness    = fitness[idx,:]
+    population = population[idx,:]
+    return population, fitness
 
 # Function: Selection
 def roulette_wheel(fitness_new): 
