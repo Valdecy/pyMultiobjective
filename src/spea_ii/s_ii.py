@@ -67,27 +67,20 @@ def raw_fitness_function(population, number_of_functions = 2):
                     raw_fitness[j,0] = raw_fitness[j,0] + strength[i,0]
     return raw_fitness
 
-# Function: Distance Calculations
-def euclidean_distance(x, y):       
-    distance = 0
-    for j in range(0, len(x)):
-        distance = (x[j] - y[j])**2 + distance   
-    return distance**(1/2) 
+# Function: Build Distance Matrix
+def euclidean_distance(coordinates):
+   a = coordinates
+   b = a.reshape(np.prod(a.shape[:-1]), 1, a.shape[-1])
+   return np.sqrt(np.einsum('ijk,ijk->ij',  b - a,  b - a)).squeeze()
 
 # Function: Fitness
 def fitness_calculation(population, raw_fitness, number_of_functions = 2):
-    k        = int(len(population)**(1/2)) - 1
+    k = int(len(population)**(1/2)) - 1
     fitness  = np.zeros((population.shape[0], 1))
-    distance = np.zeros((population.shape[0], population.shape[0]))
-    for i in range(0, population.shape[0]):
-        for j in range(0, population.shape[0]):
-            if(i != j):
-                x = np.copy(population[i, population.shape[1]-number_of_functions:])
-                y = np.copy(population[j, population.shape[1]-number_of_functions:])
-                distance[i,j] = euclidean_distance(x = x, y = y)                    
+    distance = euclidean_distance(population[:,population.shape[1]-number_of_functions:])
     for i in range(0, fitness.shape[0]):
         distance_ordered = (distance[distance[:,i].argsort()]).T
-        fitness[i,0]     = raw_fitness[i,0] + 1/(distance_ordered[i,k] + 2)
+        fitness[i,0] = raw_fitness[i,0] + 1/(distance_ordered[i,k] + 2)
     return fitness
 
 # Function: Sort Population by Fitness
