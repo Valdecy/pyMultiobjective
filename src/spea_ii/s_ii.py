@@ -7,12 +7,14 @@
 # Lesson: Strength Pareto Evolutionary Algorithm 2
 
 # Citation: 
-# PEREIRA, V. (2021). Project: pyMultiojective, File: n_iii.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
+# PEREIRA, V. (2021). Project: pyMultiojective, File: s_ii.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
 # Required Libraries
 import numpy  as np
+import math
+import matplotlib.pyplot as plt
 import random
 import os
 
@@ -57,12 +59,12 @@ def raw_fitness_function(population, number_of_functions = 2):
     raw_fitness = np.zeros((population.shape[0], 1))
     for i in range(0, population.shape[0]):
         for j in range(0, population.shape[0]):
-            if(i != j):
+            if (i != j):
                 if dominance_function(solution_1 = population[i,:], solution_2 = population[j,:], number_of_functions = number_of_functions):
                     strength[i,0] = strength[i,0] + 1
     for i in range(0, population.shape[0]):
         for j in range(0, population.shape[0]):
-            if(i != j):
+            if (i != j):
                 if dominance_function(solution_1 = population[i,:], solution_2 = population[j,:], number_of_functions = number_of_functions):
                     raw_fitness[j,0] = raw_fitness[j,0] + strength[i,0]
     return raw_fitness
@@ -75,12 +77,12 @@ def euclidean_distance(coordinates):
 
 # Function: Fitness
 def fitness_calculation(population, raw_fitness, number_of_functions = 2):
-    k = int(len(population)**(1/2)) - 1
+    k        = int(len(population)**(1/2)) - 1
     fitness  = np.zeros((population.shape[0], 1))
     distance = euclidean_distance(population[:,population.shape[1]-number_of_functions:])
     for i in range(0, fitness.shape[0]):
         distance_ordered = (distance[distance[:,i].argsort()]).T
-        fitness[i,0] = raw_fitness[i,0] + 1/(distance_ordered[i,k] + 2)
+        fitness[i,0]     = raw_fitness[i,0] + 1/(distance_ordered[i,k] + 2)
     return fitness
 
 # Function: Sort Population by Fitness
@@ -90,12 +92,23 @@ def sort_population_by_fitness(population, fitness):
     population = population[idx,:]
     return population, fitness
 
+# Function: Sort Population by Fitness
+def sort_population_by_fitness_(population, fitness):
+    idx            = np.argsort(fitness[:,-1])
+    fitness_new    = np.zeros((population.shape[0], 1))
+    population_new = np.zeros((population.shape[0], population.shape[1]))
+    for i in range(0, population.shape[0]):
+        fitness_new[i,0] = fitness[idx[i],0] 
+        for k in range(0, population.shape[1]):
+            population_new[i,k] = population[idx[i],k]
+    return population_new, fitness_new
+
 # Function: Selection
 def roulette_wheel(fitness_new): 
     fitness = np.zeros((fitness_new.shape[0], 2))
     for i in range(0, fitness.shape[0]):
         fitness[i,0] = 1/(1+ fitness[i,0] + abs(fitness[:,0].min()))
-    fit_sum = fitness[:,0].sum()
+    fit_sum      = fitness[:,0].sum()
     fitness[0,1] = fitness[0,0]
     for i in range(1, fitness.shape[0]):
         fitness[i,1] = (fitness[i,0] + fitness[i-1,1])
