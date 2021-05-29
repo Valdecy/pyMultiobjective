@@ -90,14 +90,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
 
 # Function: Sort Population by Rank
 def sort_population_by_rank(population, rank):
-    idx            = np.argsort(rank, axis = 0)
-    rank_new       = np.zeros((population.shape[0], 1))
-    population_new = np.zeros((population.shape[0], population.shape[1]))  
-    for i in range(0, population.shape[0]):
-        rank_new[i, 0] = rank[idx[i], 0] 
-        for k in range(0, population.shape[1]):
-            population_new[i,k] = population[idx[i],k]
-    return population_new, rank_new
+    idx        = np.argsort(rank[:,0], axis = 0).tolist()
+    rank       = rank[idx,:]
+    population = population[idx,:]
+    return population, rank
 
 # Function: Neighbour Sorting
 def neighbour_sorting(population, rank, column = 0, index_value = 1, value = 0):
