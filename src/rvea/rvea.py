@@ -133,7 +133,7 @@ def selection(population, offspring, M, weights, neighbours, alpha, t, t_max):
         niche.update({i: list(np.where(idx == i)[0])})
     idx_ = []
     for i in range(0, weights.shape[0]):
-        if len(niche[i]) != 0:
+        if (len(niche[i]) != 0):
             individual = niche[i]
             arc_c_ind  = arc_c[individual, i]
             arc_c_ind  = arc_c_ind / neighbours[i]
