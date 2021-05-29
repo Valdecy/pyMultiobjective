@@ -98,7 +98,6 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
 
 ############################################################################
 
-   
 # Function: Reference Points
 def reference_points(M, p):
     def generator(r_points, M, Q, T, D):
