@@ -131,7 +131,6 @@ def selection(population, offspring, M, weights, neighbours, alpha, t, t_max):
     idx_u      = set(idx)
     for i in idx_u:
         niche.update({i: list(np.where(idx == i)[0])})
-        niche
     idx_ = []
     for i in range(0, weights.shape[0]):
         if len(niche[i]) != 0:
