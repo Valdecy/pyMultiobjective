@@ -84,7 +84,7 @@ def fitness_calculation(population, raw_fitness, number_of_functions = 2):
     return fitness
 
 # Function: Sort Population by Fitness
-def sort_population_by_fitness_(population, fitness):
+def sort_population_by_fitness(population, fitness):
     idx        = np.argsort(fitness[:,-1]).tolist()
     fitness    = fitness[idx,:]
     population = population[idx,:]
