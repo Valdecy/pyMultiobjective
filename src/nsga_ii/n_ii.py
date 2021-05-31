@@ -116,7 +116,7 @@ def crowding_distance_function(pop, M):
             b[i, j] = b[i + 1, j]
         norm            = np.max(population, axis = 0) - np.min(population, axis = 0)
         norm[norm == 0] = np.nan
-        a, b            = a[:-1] / norm, b[1:] / norm
+        a, b            = a[:-1]/norm, b[1:]/norm
         a[np.isnan(a)]  = 0.0
         b[np.isnan(b)]  = 0.0
         arg_2           = np.argsort(arg_1, axis = 0)
