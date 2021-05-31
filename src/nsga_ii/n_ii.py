@@ -210,7 +210,7 @@ def non_dominated_sorting_genetic_algorithm_II(population_size = 5, mutation_rat
         population, rank  = population[0:population_size,:], rank[0:population_size,:] 
         rank              = fast_non_dominated_sorting(population, number_of_functions = len(list_of_functions))
         population, rank  = sort_population_by_rank(population, rank)
-        crowding_distance = crowding_distance_function(population, rank,  number_of_functions = len(list_of_functions))
+        crowding_distance = crowding_distance_function(population, len(list_of_functions))
         offspring         = breeding(population, rank, crowding_distance, mu = mu, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)
         offspring         = mutation(offspring, mutation_rate = mutation_rate, eta = eta, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)             
         count             = count + 1              
