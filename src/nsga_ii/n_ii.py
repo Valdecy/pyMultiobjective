@@ -109,9 +109,9 @@ def crowding_distance_function(pop, M):
         dist       = np.concatenate([population, np.full((1, M), np.inf)]) - np.concatenate([np.full((1, M), -np.inf), population])
         idx        = np.where(dist == 0)
         a          = np.copy(dist)
+        b          = np.copy(dist)
         for i, j in zip(*idx):
             a[i, j] = a[i - 1, j]
-        b = np.copy(dist)
         for i, j in reversed(list(zip(*idx))):
             b[i, j] = b[i + 1, j]
         norm            = np.max(population, axis = 0) - np.min(population, axis = 0)
