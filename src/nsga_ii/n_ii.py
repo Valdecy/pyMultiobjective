@@ -95,42 +95,34 @@ def sort_population_by_rank(population, rank):
     population = population[idx,:]
     return population, rank
 
-# Function: Neighbour Sorting
-def neighbour_sorting(population, rank, column = 0, index_value = 1, value = 0):
-    sorted_population = np.copy(population)
-    for  i in range(rank.shape[0] -1, 0, -1):
-        if (rank[i, 0] != index_value):
-            sorted_population = np.delete(sorted_population, i, 0)
-    sorted_population_ordered = (sorted_population[sorted_population[: ,column].argsort()])
-    value_lower = float("inf")
-    value_upper = float("inf")
-    for i in range(0, sorted_population_ordered.shape[0]):
-        if (sorted_population_ordered[i, column] == value and sorted_population_ordered.shape[0] > 2):
-            if (i == 0):
-                value_lower = float("inf")
-                value_upper = sorted_population_ordered[i+1, column] 
-                break
-            elif (i == sorted_population_ordered.shape[0] - 1):
-                value_lower = sorted_population_ordered[i-1, column]
-                value_upper = float("inf")
-                break
-            else:
-                value_lower = sorted_population_ordered[i-1, column]
-                value_upper = sorted_population_ordered[i+1, column]  
-                break
-    return value_lower, value_upper
-
-# Function: Crowding Distance
-def crowding_distance_function(population, rank, number_of_functions = 2):
-    crowding_distance = np.zeros((population.shape[0], 1))    
-    for i in range(0, population.shape[0]):
-        for j in range(1, number_of_functions + 1):
-            f_minus_1, f_plus_1 = neighbour_sorting(population, rank, column = -j, index_value = rank[i, 0], value = population[i,-j])  
-            if (f_minus_1 == float("inf") or f_plus_1 == float("inf")):
-                crowding_distance[i, 0] = 99999999999
-            else:
-                crowding_distance[i, 0] = crowding_distance[i, 0] + (f_plus_1 - f_minus_1)
-    return crowding_distance 
+# Function: Crowding Distance (Adapted from PYMOO)
+def crowding_distance_function(pop, M):
+    infinity   = 1e+11
+    population = copy.deepcopy(pop[:,-M:])
+    population = population.reshape((pop.shape[0], M))
+    if (population.shape[0] <= 2):
+        return np.full(population.shape[0], infinity)
+    else:
+        arg_1      = np.argsort(population, axis = 0, kind = 'mergesort')
+        population = population[arg_1, np.arange(M)]
+        dist       = np.concatenate([population, np.full((1, M), np.inf)]) - np.concatenate([np.full((1, M), -np.inf), population])
+        idx        = np.where(dist == 0)
+        a          = np.copy(dist)
+        for i, j in zip(*idx):
+            a[i, j] = a[i - 1, j]
+        b = np.copy(dist)
+        for i, j in reversed(list(zip(*idx))):
+            b[i, j] = b[i + 1, j]
+        norm            = np.max(population, axis = 0) - np.min(population, axis = 0)
+        norm[norm == 0] = np.nan
+        a, b            = a[:-1] / norm, b[1:] / norm
+        a[np.isnan(a)]  = 0.0
+        b[np.isnan(b)]  = 0.0
+        arg_2           = np.argsort(arg_1, axis = 0)
+        crowding        = np.sum(a[arg_2, np.arange(M)] + b[arg_2, np.arange(M)], axis = 1) / M
+    crowding[np.isinf(crowding)] = infinity
+    crowding                     = crowding.reshape((-1,1))
+    return crowding
 
 # Function:Crowded Comparison Operator
 def crowded_comparison_operator(rank, crowding_distance, individual_1 = 0, individual_2 = 1):
