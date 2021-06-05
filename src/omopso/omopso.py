@@ -4,10 +4,10 @@
 # UFF - Universidade Federal Fluminense (Brazil)
 # email:  valdecy.pereira@gmail.com
 # Course: Metaheuristics
-# Lesson: OMPSO
+# Lesson: OMOPSO
 
 # Citation: 
-# PEREIRA, V. (2021). Project: pyMultiojective, File: ompso.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
+# PEREIRA, V. (2021). Project: pyMultiojective, File: omopso.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
