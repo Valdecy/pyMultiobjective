@@ -143,7 +143,7 @@ def selection(population, offspring, M, weights, neighbours, alpha, t, t_max):
     return population[idx_ , :]
 
 # Function: Adaptation
-def adaptation(population, weights, weights_, neighbours, M):
+def adaptation(population, weights, weights_, M):
     z_min      = np.min(population[:,-M:], axis = 0)
     z_max      = np.max(population[:,-M:], axis = 0)
     weights    = weights_*(z_max - z_min)
@@ -171,7 +171,7 @@ def reference_vector_guided_evolutionary_algorithm(references = 5, mutation_rate
         offspring  = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions) 
         population = selection(population, offspring, M, weights, neighbours, alpha, count,  generations)
         if ( (count/generations) // fr == 0 and count != 0):
-            weights, neighbours = adaptation(population, weights, weights_, neighbours, M)
+            weights, neighbours = adaptation(population, weights, weights_, M)
         count = count + 1              
     return population[:weights.shape[0],:]
 
