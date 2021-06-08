@@ -204,7 +204,7 @@ def non_dominated_sorting_genetic_algorithm_II(population_size = 5, mutation_rat
     population = initial_population(population_size = population_size, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)  
     offspring  = initial_population(population_size = population_size, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)  
     while (count <= generations):       
-        print("Generation = ", count)
+        print('Generation = ', count)
         population        = np.vstack([population, offspring])
         rank              = fast_non_dominated_sorting(population, number_of_functions = len(list_of_functions))
         population, rank  = sort_population_by_rank(population, rank)
