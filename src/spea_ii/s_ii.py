@@ -174,7 +174,7 @@ def strength_pareto_evolutionary_algorithm_2(population_size = 5, archive_size =
     population = initial_population(population_size = population_size, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions) 
     archive    = initial_population(population_size = archive_size, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)     
     while (count <= generations):       
-        print("Generation = ", count)
+        print('Generation = ', count)
         population                   = np.vstack([population, archive])
         raw_fitness                  = raw_fitness_function(population, number_of_functions = len(list_of_functions))
         fitness                      = fitness_calculation(population, raw_fitness, number_of_functions = len(list_of_functions))        
