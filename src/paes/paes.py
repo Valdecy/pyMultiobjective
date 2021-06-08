@@ -127,7 +127,7 @@ def pareto_archived_evolution_strategy(population_size = 5, min_values = [-5,-5]
     population    = initial_population(population_size, min_values, max_values, list_of_functions)  
     offspring     = mutation(population, eta, min_values, max_values, list_of_functions) 
     while (count <= generations):       
-        print("Generation = ", count)
+        print('Generation = ', count)
         population = np.vstack([population, offspring])
         rank       = fast_non_dominated_sorting(population, number_of_functions = M)
         population = sort_population_by_rank(population, rank)
