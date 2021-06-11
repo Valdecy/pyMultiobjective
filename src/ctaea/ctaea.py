@@ -107,25 +107,26 @@ def sort_population_by_rank(ca, rank, rp = 'none'):
 # Function: Offspring
 def breeding(ca, da, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2], size = 5):
     offspring   = np.zeros((size, ca.shape[1]))
+    cada        = np.vstack([ca, da])
     parent_1    = 0
     parent_2    = 1
     b_offspring = 0  
     rank_ca     = fast_non_dominated_sorting(ca, number_of_functions = len(list_of_functions))
     rank_ca     = rank_ca[rank_ca == 1]
-    p_ca        = rank_ca.shape[0]/ca.shape[0]
+    p_ca        = rank_ca.shape[0]/(ca.shape[0] + da.shape[0])
     rank_da     = fast_non_dominated_sorting(da, number_of_functions = len(list_of_functions))
     rank_da     = rank_da[rank_da == 1]
-    p_da        = rank_da.shape[0]/da.shape[0]
+    p_da        = rank_da.shape[0]/ (ca.shape[0] + da.shape[0])
     for i in range (0, offspring.shape[0]):
         if (p_ca > p_da):
-            parent_1 = random.sample(range(0, len(ca) - 1), 1)
+            parent_1 = random.sample(range(0, len(ca) - 1), 1)[0]
         else:
-            parent_1 = random.sample(range(0, len(da) - 1), 1)
+            parent_1 = random.sample(range(0, len(da) - 1), 1)[0] + ca.shape[0]
         rand = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
         if (rand < p_ca):
-            parent_2 = random.sample(range(0, len(ca) - 1), 1)
+            parent_2 = random.sample(range(0, len(ca) - 1), 1)[0]
         else:
-            parent_2 = random.sample(range(0, len(da) - 1), 1)
+            parent_2 = random.sample(range(0, len(da) - 1), 1)[0] + ca.shape[0]
         for j in range(0, offspring.shape[1] - len(list_of_functions)):
             rand   = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
             rand_b = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)                                
@@ -135,9 +136,7 @@ def breeding(ca, da, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_f
             elif (rand > 0.5):  
                 b_offspring = 1/(2*(1 - rand_b))
                 b_offspring = b_offspring**(1/(mu + 1))       
-            offspring[i,j] = np.clip(((1 + b_offspring)*ca[parent_1, j] + (1 - b_offspring)*ca[parent_2, j])/2, min_values[j], max_values[j])           
-            if(i < ca.shape[0] - 1):   
-                offspring[i+1,j] = np.clip(((1 - b_offspring)*ca[parent_1, j] + (1 + b_offspring)*ca[parent_2, j])/2, min_values[j], max_values[j]) 
+            offspring[i,j] = np.clip(((1 + b_offspring)*cada[parent_1, j] + (1 - b_offspring)*cada[parent_2, j])/2, min_values[j], max_values[j])           
         for k in range (1, len(list_of_functions) + 1):
             offspring[i,-k] = list_of_functions[-k](offspring[i,0:offspring.shape[1]-len(list_of_functions)])
     return offspring 
