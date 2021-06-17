@@ -38,19 +38,6 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
             population[i,-k] = list_of_functions[-k](list(population[i,0:population.shape[1]-len(list_of_functions)]))
     return population
 
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
 # Function: Fast Non-Dominated Sorting
 def fast_non_dominated_sorting(population, number_of_functions = 2):
     S     = [[] for i in range(0, population.shape[0])]
@@ -61,10 +48,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
         S[p] = []
         n[p] = 0
         for q in range(0, population.shape[0]):
-            if (dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions)):
+            if ((population[p,-number_of_functions:] <= population[q,-number_of_functions:]).all()):
                 if (q not in S[p]):
                     S[p].append(q)
-            elif (dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions)):
+            elif ((population[q,-number_of_functions:] <= population[p,-number_of_functions:]).all()):
                 n[p] = n[p] + 1
         if (n[p] == 0):
             rank[p] = 0
@@ -75,10 +62,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
         Q = []
         for p in front[i]:
             for q in S[p]:
-                n[q] =n[q] - 1
-                if( n[q] == 0):
+                n[q] = n[q] - 1
+                if(n[q] == 0):
                     rank[q] = i+1
-                    if (q not in Q):
+                    if q not in Q:
                         Q.append(q)
         i = i+1
         front.append(Q)
@@ -209,8 +196,6 @@ def non_dominated_sorting_genetic_algorithm_II(population_size = 5, mutation_rat
         rank              = fast_non_dominated_sorting(population, number_of_functions = len(list_of_functions))
         population, rank  = sort_population_by_rank(population, rank)
         population, rank  = population[0:population_size,:], rank[0:population_size,:] 
-        rank              = fast_non_dominated_sorting(population, number_of_functions = len(list_of_functions))
-        population, rank  = sort_population_by_rank(population, rank)
         crowding_distance = crowding_distance_function(population, len(list_of_functions))
         offspring         = breeding(population, rank, crowding_distance, mu = mu, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)
         offspring         = mutation(offspring, mutation_rate = mutation_rate, eta = eta, min_values = min_values, max_values = max_values, list_of_functions = list_of_functions)             
