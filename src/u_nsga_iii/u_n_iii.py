@@ -224,8 +224,7 @@ def point_to_line(p1, p2, p3):
     return dl
 
 # Function: Association
-def association(population, srp, number_of_functions):
-    M   = number_of_functions
+def association(population, srp, M):
     p   = copy.deepcopy(population)
     p   = normalization(p, M)
     p1  = np.zeros((1, M))
