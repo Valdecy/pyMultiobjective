@@ -1,5 +1,5 @@
 # pyMultiobjective
-A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **IBEA** (Indicator-Based Evolutionary Algorithm) with Fast Comparison; **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2)
+A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **IBEA** (Indicator-Based Evolutionary Algorithm) with Fast Comparison; **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III)
 
 
 Try it in **Colab**:
@@ -14,3 +14,4 @@ Try it in **Colab**:
 - RVEA ([ Colab Demo ](https://colab.research.google.com/drive/1KYYAsMM52P6lxHRk5a9P8yrnRhwCgT5i?usp=sharing))
 - SMPSO ([ Colab Demo ](https://colab.research.google.com/drive/17m9AT9ORHvVqeqaRjBga1XCEuyG1EPzz?usp=sharing))
 - SPEA2 ([ Colab Demo ](https://colab.research.google.com/drive/1OrxJxxAMSpKu_xSWc9UQlPOeM_mmVHmW?usp=sharing))
+- U-NSGA III ([ Colab Demo ](https://colab.research.google.com/drive/1-AO_S6OlqzbA54DlMFBDGEL-wHh9hayH?usp=sharing))
