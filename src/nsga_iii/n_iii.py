@@ -41,19 +41,6 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
             population[i,-k] = list_of_functions[-k](list(population[i,0:population.shape[1]-len(list_of_functions)]))
     return population
 
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
 # Function: Fast Non-Dominated Sorting
 def fast_non_dominated_sorting(population, number_of_functions = 2):
     S     = [[] for i in range(0, population.shape[0])]
@@ -64,10 +51,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
         S[p] = []
         n[p] = 0
         for q in range(0, population.shape[0]):
-            if (dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions)):
+            if ((population[p,-number_of_functions:] <= population[q,-number_of_functions:]).all()):
                 if (q not in S[p]):
                     S[p].append(q)
-            elif (dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions)):
+            elif ((population[q,-number_of_functions:] <= population[p,-number_of_functions:]).all()):
                 n[p] = n[p] + 1
         if (n[p] == 0):
             rank[p] = 0
@@ -93,11 +80,18 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
     return rank
 
 # Function: Sort Population by Rank
-def sort_population_by_rank(population, rank):
-    idx        = np.argsort(rank[:,0], axis = 0).tolist()
-    rank       = rank[idx,:]
-    population = population[idx,:]
-    return population, rank
+def sort_population_by_rank(population, rank, rp = 'none'):
+    control = 1
+    if rp == 'none':
+        idx        = np.argsort(rank[:,0], axis = 0).tolist()
+        population = population[idx,:]
+    else:
+        idx = np.where(rank <= rp)[0].tolist()
+        while len(idx) < 5:
+            idx     = np.where(rank <= rp + control)[0].tolist()
+            control = control + 1
+        population = population[idx,:]
+    return population
 
 # Function: Offspring
 def breeding(population, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
@@ -231,19 +225,18 @@ def association(srp, population, number_of_functions):
     return idx
 
 # Function: Sort Population by Association
-def sort_population_by_association(srp, population, rank, number_of_functions):
+def sort_population_by_association(srp, population, number_of_functions):
     M          = number_of_functions
     idx        = association(srp, population, M)
     population = population[idx, :]
-    rank       = rank[idx, :]
-    return population, rank
+    return population
 
 ############################################################################
 
 # NSGA III Function
-def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, k = 4):       
+def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4):       
     count      = 0
-    references = max(2, references)
+    references = max(5, references)
     M          = len(list_of_functions)
     srp        = reference_points(M = M, p = references)
     size       = k*srp.shape[0]
@@ -251,15 +244,15 @@ def non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
     print('Total Number of Points on Reference Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
     while (count <= generations):       
-        print('Generation = ', count)
-        population       = np.vstack([population, offspring])
-        rank             = fast_non_dominated_sorting(population, number_of_functions = M)
-        population, rank = sort_population_by_rank(population, rank) 
-        population, rank = sort_population_by_association(srp, population, rank, number_of_functions = M)
-        population, rank = population[0:size,:], rank[0:size,:] 
-        offspring        = breeding(population, min_values, max_values, mu, list_of_functions)
-        offspring        = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
-        count            = count + 1              
+        print("Generation = ", count)
+        population = np.vstack([population, offspring])
+        rank       = fast_non_dominated_sorting(population, number_of_functions = M)
+        population = sort_population_by_rank(population, rank, rp = 1) 
+        population = sort_population_by_association(srp, population, number_of_functions = M)
+        population = population[0:size,:]
+        offspring  = breeding(population, min_values, max_values, mu, list_of_functions)
+        offspring  = mutation(offspring, mutation_rate, eta, min_values, max_values, list_of_functions)             
+        count      = count + 1              
     return population[ :srp.shape[0], :]
 
 ############################################################################
