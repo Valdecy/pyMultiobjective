@@ -81,14 +81,14 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
 def sort_population_by_rank(population, rank, rp = 'none'):
     control = 1
     if rp == 'none':
-        idx = np.argsort(rank[:,0], axis = 0).tolist()
-        population  = population[idx,:]
+        idx        = np.argsort(rank[:,0], axis = 0).tolist()
+        population = population[idx,:]
     else:
         idx = np.where(rank <= rp)[0].tolist()
-        while len(idx) < 4:
-            idx = np.where(rank <= rp + control)[0].tolist()
+        while len(idx) < 5:
+            idx     = np.where(rank <= rp + control)[0].tolist()
             control = control + 1
-        population  = population[idx,:]
+        population = population[idx,:]
     return population
 
 # Function: Offspring
@@ -247,7 +247,7 @@ def sort_population_by_association(srp, population, number_of_functions):
 # U-NSGA III Function
 def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4):       
     count      = 0
-    references = max(2, references)
+    references = max(5, references)
     M          = len(list_of_functions)
     srp        = reference_points(M = M, p = references)
     size       = k*srp.shape[0]
