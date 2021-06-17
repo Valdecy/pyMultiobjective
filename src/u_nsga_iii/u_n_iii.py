@@ -39,19 +39,6 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
             population[i,-k] = list_of_functions[-k](list(population[i,0:population.shape[1]-len(list_of_functions)]))
     return population
 
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
 # Function: Fast Non-Dominated Sorting
 def fast_non_dominated_sorting(population, number_of_functions = 2):
     S     = [[] for i in range(0, population.shape[0])]
@@ -91,9 +78,17 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
     return rank
 
 # Function: Sort Population by Rank
-def sort_population_by_rank(population, rank):
-    idx        = np.argsort(rank[:,0], axis = 0).tolist()
-    population = population[idx,:]
+def sort_population_by_rank(population, rank, rp = 'none'):
+    control = 1
+    if rp == 'none':
+        idx = np.argsort(rank[:,0], axis = 0).tolist()
+        population  = population[idx,:]
+    else:
+        idx = np.where(rank <= rp)[0].tolist()
+        while len(idx) < 4:
+            idx = np.where(rank <= rp + control)[0].tolist()
+            control = control + 1
+        population  = population[idx,:]
     return population
 
 # Function: Offspring
@@ -263,7 +258,7 @@ def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation
         print("Generation = ", count)
         population = np.vstack([population, offspring])
         rank       = fast_non_dominated_sorting(population, number_of_functions = M)
-        population = sort_population_by_rank(population, rank) 
+        population = sort_population_by_rank(population, rank, rp = 1) 
         population = sort_population_by_association(srp, population, number_of_functions = M)
         population = population[0:size,:]
         offspring  = breeding(population, srp, min_values, max_values, mu, list_of_functions)
