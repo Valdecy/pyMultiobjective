@@ -149,17 +149,6 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
 
 ############################################################################
 
-# Function: n-Simplex Projection Sort
-def projection_simplex_sort(v, z = 1):
-    u     = np.sort(v)[::-1]
-    cssv  = np.cumsum(u) - z
-    ind   = np.arange(v.shape[0]) + 1
-    cond  = u - cssv / ind > 0
-    rho   = ind [cond][-1]
-    theta = cssv[cond][-1] / float(rho)
-    w     = np.maximum(v - theta, 0)
-    return w
-
 # Function: Reference Points
 def reference_points(M, p):
     def generator(r_points, M, Q, T, D):
