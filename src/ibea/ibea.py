@@ -98,19 +98,6 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
 
 ############################################################################
 
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
 # Function: Fast Non-Dominated Sorting
 def fast_non_dominated_sorting(population, number_of_functions = 2):
     S     = [[] for i in range(0, population.shape[0])]
