@@ -38,19 +38,6 @@ def initial_population(population_size = 5, min_values = [-5,-5], max_values = [
             population[i,-k] = list_of_functions[-k](list(population[i,0:population.shape[1]-len(list_of_functions)]))
     return population
 
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
 # Function: Fast Non-Dominated Sorting
 def fast_non_dominated_sorting(population, number_of_functions = 2):
     S     = [[] for i in range(0, population.shape[0])]
@@ -61,10 +48,10 @@ def fast_non_dominated_sorting(population, number_of_functions = 2):
         S[p] = []
         n[p] = 0
         for q in range(0, population.shape[0]):
-            if (dominance_function(solution_1 = population[p,:], solution_2 = population[q,:], number_of_functions = number_of_functions)):
+            if ((population[p,-number_of_functions:] <= population[q,-number_of_functions:]).all()):
                 if (q not in S[p]):
                     S[p].append(q)
-            elif (dominance_function(solution_1 = population[q,:], solution_2 = population[p,:], number_of_functions = number_of_functions)):
+            elif ((population[q,-number_of_functions:] <= population[p,-number_of_functions:]).all()):
                 n[p] = n[p] + 1
         if (n[p] == 0):
             rank[p] = 0
