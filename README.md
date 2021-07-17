@@ -1,9 +1,10 @@
 # pyMultiobjective
-A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **IBEA** (Indicator-Based Evolutionary Algorithm) with Fast Comparison; **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III)
+A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **C-NSGA II** (Clustered Non-Dominated Sorting Genetic Algorithm II); **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **IBEA** (Indicator-Based Evolutionary Algorithm) with Fast Comparison; **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting; **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III)
 
 
 Try it in **Colab**:
 
+- C-NSGA II ([ Colab Demo ](https://colab.research.google.com/drive/1sXxCWV6dDmNXmes7RDka4OqKOtM0t9YX?usp=sharing))
 - CTAEA ([ Colab Demo ](https://colab.research.google.com/drive/1IC5m7JfmhT0ihWBhziQdfyq1PAHrmW1p?usp=sharing))
 - IBEA ([ Colab Demo ](https://colab.research.google.com/drive/1BBD0nWaE5SqL5n2Jpa_fDYgkWGSpy8xu?usp=sharing))
 - MOEA/D ([ Colab Demo ](https://colab.research.google.com/drive/1BP2qM9coiOTq28ZYeQEqxHSCHBeh3-Io?usp=sharing))
