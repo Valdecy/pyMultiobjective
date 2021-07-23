@@ -232,7 +232,9 @@ def association(population, srp, M):
     for ind in np.unique(arg).tolist():
         f = [i[0] for i in np.argwhere(arg == ind).tolist()]
         idx.append(f[d[f].argsort()[0]])
-    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
+    if (len(idx) < 5):   
+        idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
+        idx = idx[:5]
     return idx
 
 # Function: Sort Population by Association
