@@ -210,7 +210,6 @@ def association(srp, population, number_of_functions):
     for ind in np.unique(arg).tolist():
         f = [i[0] for i in np.argwhere(arg == ind).tolist()]
         idx.append(f[d[f].argsort()[0]])
-    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     return idx
 
 # Function: Sort Population by Association
