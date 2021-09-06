@@ -265,7 +265,7 @@ def update_da(ca, da, offspring, weights, M):
 ############################################################################
 
 # CTAEA Function
-def constrained_two_archive_evolutionary_algorithm(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, k = 4, alpha = 2, fr = 0.2):       
+def constrained_two_archive_evolutionary_algorithm(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 50, mu = 1, eta = 1, k = 4):       
     count      = 0
     references = max(5, references)
     M          = len(list_of_functions)
