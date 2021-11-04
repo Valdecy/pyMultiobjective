@@ -247,7 +247,7 @@ def sort_population_by_association(srp, population, number_of_functions):
 ############################################################################
 
 # U-NSGA III Function
-def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4, rp = 'none'):       
+def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4, rp = 1):       
     count      = 0
     references = max(5, references)
     M          = len(list_of_functions)
