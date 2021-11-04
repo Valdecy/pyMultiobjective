@@ -260,7 +260,7 @@ def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation
         print("Generation = ", count)
         population = np.vstack([population, offspring])
         rank       = fast_non_dominated_sorting(population, number_of_functions = M)
-        population = sort_population_by_rank(population, rank, rp = rp) 
+        population = sort_population_by_rank(population, rank, rp) 
         population = sort_population_by_association(srp, population, number_of_functions = M)
         population = population[0:size,:]
         offspring  = breeding(population, srp, min_values, max_values, mu, list_of_functions)
