@@ -93,7 +93,7 @@ def sort_population_by_rank(population, rank, rp = 'none'):
 
 # Function: Offspring
 def breeding(population, srp, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
-    offspring   = np.copy(population)
+    offspring   = np.zeros((srp.shape[0], population.shape[1]))
     parent_1    = 0
     parent_2    = 1
     b_offspring = 0
