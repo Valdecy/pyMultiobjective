@@ -93,7 +93,7 @@ def sort_population_by_rank(population, rank, rp = 'none'):
 
 # Function: Offspring
 def breeding(population, srp, min_values = [-5,-5], max_values = [5,5], mu = 1, list_of_functions = [func_1, func_2]):
-    offspring   = np.zeros((srp.shape[0], population.shape[1]))
+    offspring   = np.copy(population)
     parent_1    = 0
     parent_2    = 1
     b_offspring = 0
@@ -247,7 +247,7 @@ def sort_population_by_association(srp, population, number_of_functions):
 ############################################################################
 
 # U-NSGA III Function
-def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4, rp = 1):       
+def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation_rate = 0.1, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2], generations = 5, mu = 1, eta = 1, k = 4, rp = 'none'):       
     count      = 0
     references = max(5, references)
     M          = len(list_of_functions)
@@ -257,7 +257,7 @@ def unified_non_dominated_sorting_genetic_algorithm_III(references = 5, mutation
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
     print('Total Number of Points on Reference Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
     while (count <= generations):       
-        print("Generation = ", count)
+        print('Generation = ', count)
         population = np.vstack([population, offspring])
         rank       = fast_non_dominated_sorting(population, number_of_functions = M)
         population = sort_population_by_rank(population, rank, rp) 
