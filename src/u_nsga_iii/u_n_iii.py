@@ -235,6 +235,7 @@ def association(population, srp, M):
     if (len(idx) < 5):   
         idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
         idx = idx[:5]
+    idx.extend([x for x in list(range(0, population.shape[0])) if x not in idx])
     return idx
 
 # Function: Sort Population by Association
