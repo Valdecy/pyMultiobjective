@@ -128,7 +128,6 @@ Try it in **Colab**:
 - NSGA III ([ Colab Demo ](https://colab.research.google.com/drive/18zcEdU3NNplFiXAqH8g-oSrEhWB-uqQN?usp=sharing)) ( [ Original Paper ](http://dx.doi.org/10.1109/TEVC.2013.2281535))
 - OMOPSO ([ Colab Demo ](https://colab.research.google.com/drive/1cvSZllLYhU6UvuFM7KgDvb1YaNLZVU32?usp=sharing)) ( [ Original Paper ](http://dx.doi.org/10.1007/978-3-540-31880-4_35))
 - PAES ([ Colab Demo ](https://colab.research.google.com/drive/1iz5Q9CYiLpyYEKJzd0KwQrGrZykr49TX?usp=sharing))  ( [ Original Paper ](https://doi.org/10.1109/CEC.1999.781913))
-- R-NSGA III ([ Colab Demo ]()) ( [ Original Paper ](https://doi.org/10.1109/SSCI.2018.8628819))
 - RVEA ([ Colab Demo ](https://colab.research.google.com/drive/1KYYAsMM52P6lxHRk5a9P8yrnRhwCgT5i?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1109/TEVC.2016.2519378))
 - SMPSO ([ Colab Demo ](https://colab.research.google.com/drive/17m9AT9ORHvVqeqaRjBga1XCEuyG1EPzz?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1109/MCDM.2009.4938830))
 - SPEA2 ([ Colab Demo ](https://colab.research.google.com/drive/1OrxJxxAMSpKu_xSWc9UQlPOeM_mmVHmW?usp=sharing)) ( [ Original Paper ](https://kdd.cs.ksu.edu/Courses/CIS830/Handouts/P8.pdf))
