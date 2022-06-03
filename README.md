@@ -135,8 +135,6 @@ Try it in **Colab**:
 - SPEA2 ([ Colab Demo ](https://colab.research.google.com/drive/1OrxJxxAMSpKu_xSWc9UQlPOeM_mmVHmW?usp=sharing)) ( [ Original Paper ](https://kdd.cs.ksu.edu/Courses/CIS830/Handouts/P8.pdf))
 - U-NSGA III ([ Colab Demo ](https://colab.research.google.com/drive/1-AO_S6OlqzbA54DlMFBDGEL-wHh9hayH?usp=sharing)) ( [ Original Paper ](https://www.egr.msu.edu/~kdeb/papers/c2014022.pdf))
 
-- R-NSGA III ([ Colab Demo ]()) ( [ Original Paper ](https://doi.org/10.1109/SSCI.2018.8628819))
-
 4. Test Functions
 
 - Test Functions with various types of visualizations: Scatter (2D, 3D or ND), Parallel (2D, 3D or ND), Andrews (2D, 3D or ND), Radar (3D or ND) and Complex Radar Plots (3D or ND) ([ Colab Demo ](https://colab.research.google.com/drive/1ALVZp333yO6rPEcR0fhVQn-PJeH5PmGP?usp=sharing)) 
