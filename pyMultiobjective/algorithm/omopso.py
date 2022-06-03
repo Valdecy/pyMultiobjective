@@ -39,43 +39,24 @@ def initial_position(swarm_size = 5, min_values = [-5,-5], max_values = [5,5], l
             position[i,-k] = list_of_functions[-k](list(position[i,0:position.shape[1]-len(list_of_functions)]))
     return position 
 
-# Function: Updtade Position
-def update_position(position, velocity, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2]):
-    for i in range(0, position.shape[0]):
-        for j in range(0, len(min_values)):
-            position[i,j] = np.clip((position[i,j] + velocity[i,j]),  min_values[j],  max_values[j])
-        for k in range (1, len(list_of_functions) + 1):
-            position[i,-k] = list_of_functions[-k](list(position[i,0:position.shape[1]-len(list_of_functions)]))
-    return position
-
-# Function: Initialize Velocity
-def initial_velocity(position, min_values = [-5,-5], max_values = [5,5]):
-    velocity = np.zeros((position.shape[0], len(min_values)))
-    for i in range(0, velocity.shape[0]):
-        for j in range(0, velocity.shape[1]):
-            velocity[i,j] = random.uniform(min_values[j], max_values[j])
-    return velocity
-
 # Function: Velocity
-def velocity_vector(position, velocity_, archive, M, min_values = [-5,-5], max_values = [5,5]):
-    r1  = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
-    r2  = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
-    w   = np.random.uniform(low = 0.1, high = 0.5, size = 1)[0]
-    c1  = np.random.uniform(low = 1.5, high = 2.0, size = 1)[0]
-    c2  = np.random.uniform(low = 1.5, high = 2.5, size = 1)[0]
-    velocity = np.zeros((position.shape[0], velocity_.shape[1]))
-    crowding = crowding_distance_function(archive, M)
-    if (archive.shape[0] > 2):
-        ind_1, ind_2 = random.sample(range(0, len(archive) - 1), 2)
-        if (crowding[ind_1,0] < crowding[ind_2,0]):
-            ind_1, ind_2 = ind_2, ind_1
+def velocity_vector(position, leaders, min_values = [-5,-5], max_values = [5,5], list_of_functions = [func_1, func_2]):
+    r1   = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+    r2   = int.from_bytes(os.urandom(8), byteorder = "big") / ((1 << 64) - 1)
+    w    = np.random.uniform(low = -0.5, high = 0.5, size = 1)[0]
+    c1   = np.random.uniform(low = -2.0, high = 2.0, size = 1)[0]
+    c2   = np.random.uniform(low = -2.5, high = 2.5, size = 1)[0]
+    vel_ = np.zeros((position.shape[0], position.shape[1]))
+    if (leaders.shape[0] > 2):
+        ind_1 = random.sample(range(0, len(leaders) - 1), 1)
     else:
         ind_1 = 0
-        ind_2 = 0
-    for i in range(0, velocity.shape[0]):
-        for j in range(0, velocity.shape[1]):
-            velocity[i,j] = w*velocity_[i,j] + c1*r1*(archive[ind_1, j] - position[i,j]) + c2*r2*(archive[ind_2, j] - position[i,j])
-    return velocity
+    for i in range(0, vel_.shape[0]):
+        for j in range(0, len(min_values)):
+            vel_[i,j] =  np.clip(w*position[i,j] + c1*r1*(leaders[ind_1, j] - position[i,j]) + c2*r2*(leaders[ind_1, j] - position[i,j]),  min_values[j],  max_values[j]) 
+        for k in range (1, len(list_of_functions) + 1):
+            vel_[i,-k] = list_of_functions[-k](list(vel_[i,0:vel_.shape[1]-len(list_of_functions)]))
+    return vel_
 
 ############################################################################
 
@@ -132,11 +113,10 @@ def fast_non_dominated_sorting(position, number_of_functions = 2):
 
 # Function: Crowding Distance (Adapted from PYMOO)
 def crowding_distance_function(pop, M):
-    infinity = 1e+11
     position = copy.deepcopy(pop[:,-M:])
     position =  position.reshape((pop.shape[0], M))
     if (position.shape[0] <= 2):
-        return np.full( position.shape[0], infinity)
+        return np.full( position.shape[0], float('+inf'))
     else:
         arg_1    = np.argsort( position, axis = 0, kind = 'mergesort')
         position = position[arg_1, np.arange(M)]
@@ -155,25 +135,66 @@ def crowding_distance_function(pop, M):
         b[np.isnan(b)]  = 0.0
         arg_2           = np.argsort(arg_1, axis = 0)
         crowding        = np.sum(a[arg_2, np.arange(M)] + b[arg_2, np.arange(M)], axis = 1) / M
-    crowding[np.isinf(crowding)] = infinity
+    crowding[np.isinf(crowding)] = float('+inf')
     crowding                     = crowding.reshape((-1,1))
     return crowding
 
 ############################################################################
 
 # Function: Selection
-def selection(position, archive, M):
+def selection(swarm_size, position, archive, M):
     archive = np.vstack([position, archive])
     rank    = fast_non_dominated_sorting(archive, M)
     arg     = np.argsort(rank , axis = 0).tolist()
-    arg     = [i[0] for i in arg]
+    try:
+        arg = [i[0] for i in arg ]
+    except:
+        arg = [i for i in arg ]
     archive = archive[arg, :]
-    rank    = rank[arg, :]
-    idx     = np.where(rank == 1)[0]
-    if (len(idx) > 1):
-        archive = archive[idx, :]
-    archive = archive[:2*position.shape[0], :]
+    archive = archive[:2*swarm_size, :]
     return archive
+
+# Function: Leaders Selection
+def selection_leaders(swarm_size, M, leaders, velocity, archive, position):
+    leaders  = np.vstack([leaders, np.unique(velocity, axis = 0), np.unique(archive, axis = 0), position])
+    rank     = fast_non_dominated_sorting(leaders, M)
+    idx      = np.where(rank == 1)[0]
+    if (len(idx) > 1):
+        leaders = leaders[idx, :]
+    crowding = crowding_distance_function(leaders, M)
+    arg      = np.argsort(crowding , axis = 0).tolist()
+    try:
+        arg = [i[0] for i in arg ]
+    except:
+        arg = [i for i in arg ]
+    if (len(arg) > 0):
+        leaders = leaders[arg, :]
+    leaders = np.unique(leaders, axis = 0)
+    leaders = leaders[:swarm_size, :]
+    return leaders
+
+# Function: Normalize Objective Functions
+def normalization(solution, number_of_functions):
+    M               = number_of_functions
+    z_min           = np.min(solution[:,-M:], axis = 0)
+    z_max           = np.max(solution[:,-M:], axis = 0)
+    solution[:,-M:] = np.clip((solution[:,-M:] - z_min) /(z_max - z_min + 0.0000001), 0, 1)
+    return solution
+
+# Function: Epsilon Dominance
+def selection_eps_dominance(eps_dom, position, M, eps = 0.02):
+    solution = np.vstack([eps_dom, position])
+    solution = np.unique(solution, axis = 0)
+    eps_dom  = np.copy(solution)
+    solution = normalization(solution, M)
+    idx_j    = [[] for _ in range(0, solution.shape[0])]
+    for i in range(0, solution.shape[0]):
+        for j in range(0, solution.shape[0]):
+            idx_j[i].append(dominance_function(solution[i,:]/(1 + eps), solution[j,:], M))
+    dom_m   = np.array(idx_j)
+    idx_m   = [i for i in range(0, dom_m.shape[0]) if sum(dom_m[:,i]) < dom_m.shape[0]]
+    eps_dom = eps_dom[idx_m,:]
+    return eps_dom
 
 ############################################################################
 
@@ -200,20 +221,32 @@ def mutation(position, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_v
 ############################################################################
 
 # OMPSO Function
-def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_values = [-5,-5], max_values = [5,5], iterations = 50, list_of_functions = [func_1, func_2], mutation_rate = 0.1, eta = 3, verbose = True):    
+def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_values = [-5,-5], max_values = [5,5], iterations = 500, list_of_functions = [func_1, func_2], mutation_rate = 0.1, eta = 3, eps = 5, k = 5, verbose = True):    
     count    = 0
     M        = len(list_of_functions)
-    position = initial_position( swarm_size, min_values, max_values, list_of_functions)
-    archive  = copy.deepcopy(position)
-    velocity = initial_velocity(position, min_values, max_values)
+    position = initial_position(swarm_size, min_values, max_values, list_of_functions)
+    archive  = initial_position(swarm_size, min_values, max_values, list_of_functions)
+    velocity = initial_position(swarm_size, min_values, max_values, list_of_functions)
+    leaders  = initial_position(swarm_size, min_values, max_values, list_of_functions)
+    eps_dom  = initial_position(swarm_size, min_values, max_values, list_of_functions)
     while (count <= iterations):
         if (verbose == True):
             print('Generation = ', count)
-        position = update_position(position, velocity, min_values, max_values, list_of_functions) 
         position = mutation(position, mutation_rate, eta, min_values, max_values, list_of_functions)
-        archive  = selection(position, archive, M)
-        velocity = velocity_vector(position, velocity, archive, M, min_values, max_values)         
-        count    = count + 1       
-    return archive
+        archive  = selection(swarm_size, position, archive, M)
+        velocity = velocity_vector(position, leaders, min_values, max_values, list_of_functions) 
+        leaders  = selection_leaders(swarm_size, M, leaders, velocity, archive, position)
+        eps_dom  = selection_eps_dominance(eps_dom, np.vstack([position, velocity, archive, leaders]), M, eps)
+        if (eps_dom.shape[0] > k*swarm_size):
+            rank     = fast_non_dominated_sorting(eps_dom, M)
+            idx      = np.where(rank == 1)[0]
+            if (len(idx) > 1):
+                eps_dom = eps_dom[idx, :]
+            eps_dom = eps_dom[:k*swarm_size, :]
+        count    = count + 1 
+    if (len(eps_dom) == 0):
+        return leaders
+    else:
+        return eps_dom
 
 ############################################################################
