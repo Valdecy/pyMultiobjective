@@ -172,7 +172,7 @@ def indicator_based_evolutionary_algorithm(population_size = 5, mutation_rate = 
         z_min      = np.vstack([z_min, np.min(population[:,-M:], axis = 0)])
         z_min      = np.min(z_min, axis = 0)
         z_max      = np.vstack([z_max, np.max(population[:,-M:], axis = 0)])
-        z_max      = np.min(z_max, axis = 0)
+        z_max      = np.max(z_max, axis = 0)
         population = selection(population, population_size, M, z_min, z_max)
         count      = count + 1  
     rank             = fast_non_dominated_sorting(population, number_of_functions = M)
