@@ -124,7 +124,7 @@ Try it in **Colab**:
 - CTAEA ([ Colab Demo ](https://colab.research.google.com/drive/1IC5m7JfmhT0ihWBhziQdfyq1PAHrmW1p?usp=sharing)) ( [ Original Paper ](https://doi.org/10.48550/arXiv.2103.06382))
 - GrEA ([ Colab Demo ](https://colab.research.google.com/drive/1H2w77kCGUj33qI7uIE-e68999zy1L8tf?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1109/TEVC.2012.2227145))
 - IBEA ([ Colab Demo ](https://colab.research.google.com/drive/1BBD0nWaE5SqL5n2Jpa_fDYgkWGSpy8xu?usp=sharing)) ( [ Original Paper ](https://www.simonkuenzli.ch/docs/ZK04.pdf))
-- IBEA_HV ([ Colab Demo ](https://colab.research.google.com/drive/1XoiEAR3xpx0DbivrSp_QEFA32xm_R1lk)) ( [ Original Paper ](https://www.simonkuenzli.ch/docs/ZK04.pdf))
+- IBEA-HV ([ Colab Demo ](https://colab.research.google.com/drive/1XoiEAR3xpx0DbivrSp_QEFA32xm_R1lk)) ( [ Original Paper ](https://www.simonkuenzli.ch/docs/ZK04.pdf))
 - MOEA/D ([ Colab Demo ](https://colab.research.google.com/drive/1BP2qM9coiOTq28ZYeQEqxHSCHBeh3-Io?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1109/TEVC.2007.892759))
 - NAEMO ([ Colab Demo ](https://colab.research.google.com/drive/1ctVjjOKhLQ1DqQJ0ozcvp2pClmbwBg8O?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1016/j.swevo.2018.12.002))
 - NSGA II ([ Colab Demo ](https://colab.research.google.com/drive/1aD1uiJOCezCG6lotMAQENGas4abEO3_6?usp=sharing)) ( [ Original Paper ](http://dx.doi.org/10.1109/4235.996017))
