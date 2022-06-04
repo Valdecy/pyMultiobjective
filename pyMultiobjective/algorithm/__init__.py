@@ -2,6 +2,7 @@ from .c_n_ii import clustered_non_dominated_sorting_genetic_algorithm_II
 from .ctaea import constrained_two_archive_evolutionary_algorithm
 from .grea import grid_based_evolutionary_algorithm
 from .ibea import indicator_based_evolutionary_algorithm
+from .ibea_hv import indicator_based_evolutionary_algorithm_hv
 from .moead import multiobjective_evolutionary_algorithm_based_on_decomposition
 from .n_ii import non_dominated_sorting_genetic_algorithm_II
 from .n_iii import non_dominated_sorting_genetic_algorithm_III
