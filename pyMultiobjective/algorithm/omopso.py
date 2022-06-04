@@ -7,7 +7,7 @@
 # Lesson: OMOPSO
 
 # Citation: 
-# PEREIRA, V. (2021). Project: pyMultiojective, File: omopso.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
+# PEREIRA, V. (2022). Project: pyMultiojective, File: omopso.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
@@ -47,11 +47,11 @@ def velocity_vector(position, leaders, min_values = [-5,-5], max_values = [5,5],
     c1   = np.random.uniform(low = -2.0, high = 2.0, size = 1)[0]
     c2   = np.random.uniform(low = -2.5, high = 2.5, size = 1)[0]
     vel_ = np.zeros((position.shape[0], position.shape[1]))
-    if (leaders.shape[0] > 2):
-        ind_1 = random.sample(range(0, len(leaders) - 1), 1)
-    else:
-        ind_1 = 0
     for i in range(0, vel_.shape[0]):
+        if (leaders.shape[0] > 2):
+            ind_1 = random.sample(range(0, len(leaders) - 1), 1)
+        else:
+            ind_1 = 0
         for j in range(0, len(min_values)):
             vel_[i,j] =  np.clip(w*position[i,j] + c1*r1*(leaders[ind_1, j] - position[i,j]) + c2*r2*(leaders[ind_1, j] - position[i,j]),  min_values[j],  max_values[j]) 
         for k in range (1, len(list_of_functions) + 1):
@@ -59,57 +59,6 @@ def velocity_vector(position, leaders, min_values = [-5,-5], max_values = [5,5],
     return vel_
 
 ############################################################################
-
-# Function: Dominance
-def dominance_function(solution_1, solution_2, number_of_functions = 2):
-    count     = 0
-    dominance = True
-    for k in range (1, number_of_functions + 1):
-        if (solution_1[-k] <= solution_2[-k]):
-            count = count + 1
-    if (count == number_of_functions):
-        dominance = True
-    else:
-        dominance = False       
-    return dominance
-
-# Function: Fast Non-Dominated Sorting
-def fast_non_dominated_sorting(position, number_of_functions = 2):
-    S     = [[] for i in range(0, position.shape[0])]
-    front = [[]]
-    n     = [0 for i in range(0, position.shape[0])]
-    rank  = [0 for i in range(0, position.shape[0])]
-    for p in range(0, position.shape[0]):
-        S[p] = []
-        n[p] = 0
-        for q in range(0, position.shape[0]):
-            if (dominance_function(solution_1 = position[p,:], solution_2 = position[q,:], number_of_functions = number_of_functions)):
-                if (q not in S[p]):
-                    S[p].append(q)
-            elif (dominance_function(solution_1 = position[q,:], solution_2 = position[p,:], number_of_functions = number_of_functions)):
-                n[p] = n[p] + 1
-        if (n[p] == 0):
-            rank[p] = 0
-            if (p not in front[0]):
-                front[0].append(p)
-    i = 0
-    while (front[i] != []):
-        Q = []
-        for p in front[i]:
-            for q in S[p]:
-                n[q] = n[q] - 1
-                if(n[q] == 0):
-                    rank[q] = i+1
-                    if q not in Q:
-                        Q.append(q)
-        i = i+1
-        front.append(Q)
-    del front[len(front)-1]
-    rank = np.zeros((position.shape[0], 1))
-    for i in range(0, len(front)):
-        for j in range(0, len(front[i])):
-            rank[front[i][j], 0] = i + 1
-    return rank
 
 # Function: Crowding Distance (Adapted from PYMOO)
 def crowding_distance_function(pop, M):
@@ -139,30 +88,41 @@ def crowding_distance_function(pop, M):
     crowding                     = crowding.reshape((-1,1))
     return crowding
 
+# Function:  Pareto Front  
+def pareto_front_points(pts, pf_min = True):
+    def pareto_front(pts, pf_min):
+        pf = np.zeros(pts.shape[0], dtype = np.bool_)
+        for i in range(0, pts.shape[0]):
+            cost = pts[i, :]
+            if (pf_min == True):
+                g_cost = np.logical_not(np.any(pts > cost, axis = 1))
+                b_cost = np.any(pts < cost, axis = 1)
+            else:
+                g_cost = np.logical_not(np.any(pts < cost, axis = 1))
+                b_cost = np.any(pts > cost, axis = 1)
+            dominated = np.logical_and(g_cost, b_cost)
+            if  (np.any(pf) == True):
+                if (np.any(np.all(pts[pf] == cost, axis = 1)) == True):
+                    continue
+            if not (np.any(dominated[:i]) == True or np.any(dominated[i + 1 :]) == True):
+                pf[i] = True
+        return pf
+    idx     = np.argsort(((pts - pts.mean(axis = 0))/(pts.std(axis = 0) + 1e-7)).sum(axis = 1))
+    pts     = pts[idx]
+    pf      = pareto_front(pts, pf_min)
+    pf[idx] = pf.copy()
+    return pf
+
 ############################################################################
 
-# Function: Selection
-def selection(swarm_size, position, archive, M):
-    archive = np.vstack([position, archive])
-    rank    = fast_non_dominated_sorting(archive, M)
-    arg     = np.argsort(rank , axis = 0).tolist()
-    try:
-        arg = [i[0] for i in arg ]
-    except:
-        arg = [i for i in arg ]
-    archive = archive[arg, :]
-    archive = archive[:2*swarm_size, :]
-    return archive
-
 # Function: Leaders Selection
-def selection_leaders(swarm_size, M, leaders, velocity, archive, position):
-    leaders  = np.vstack([leaders, np.unique(velocity, axis = 0), np.unique(archive, axis = 0), position])
-    rank     = fast_non_dominated_sorting(leaders, M)
-    idx      = np.where(rank == 1)[0]
-    if (len(idx) > 1):
+def selection_leaders(swarm_size, M, leaders, velocity, position):
+    leaders  = np.vstack([leaders, np.unique(velocity, axis = 0), position])
+    idx      = pareto_front_points(leaders[:, -M:], pf_min = True)
+    if (len(idx) > 0):
         leaders = leaders[idx, :]
     crowding = crowding_distance_function(leaders, M)
-    arg      = np.argsort(crowding , axis = 0).tolist()
+    arg      = np.argsort(crowding , axis = 0)[::-1].tolist()
     try:
         arg = [i[0] for i in arg ]
     except:
@@ -173,27 +133,13 @@ def selection_leaders(swarm_size, M, leaders, velocity, archive, position):
     leaders = leaders[:swarm_size, :]
     return leaders
 
-# Function: Normalize Objective Functions
-def normalization(solution, number_of_functions):
-    M               = number_of_functions
-    z_min           = np.min(solution[:,-M:], axis = 0)
-    z_max           = np.max(solution[:,-M:], axis = 0)
-    solution[:,-M:] = np.clip((solution[:,-M:] - z_min) /(z_max - z_min + 0.0000001), 0, 1)
-    return solution
-
 # Function: Epsilon Dominance
-def selection_eps_dominance(eps_dom, position, M, eps = 0.02):
+def selection_dominance(eps_dom, position, M):
     solution = np.vstack([eps_dom, position])
     solution = np.unique(solution, axis = 0)
     eps_dom  = np.copy(solution)
-    solution = normalization(solution, M)
-    idx_j    = [[] for _ in range(0, solution.shape[0])]
-    for i in range(0, solution.shape[0]):
-        for j in range(0, solution.shape[0]):
-            idx_j[i].append(dominance_function(solution[i,:]/(1 + eps), solution[j,:], M))
-    dom_m   = np.array(idx_j)
-    idx_m   = [i for i in range(0, dom_m.shape[0]) if sum(dom_m[:,i]) < dom_m.shape[0]]
-    eps_dom = eps_dom[idx_m,:]
+    idx      = pareto_front_points(solution[:, -M:], pf_min = True)
+    eps_dom  = eps_dom[idx,:]
     return eps_dom
 
 ############################################################################
@@ -221,11 +167,10 @@ def mutation(position, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_v
 ############################################################################
 
 # OMPSO Function
-def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_values = [-5,-5], max_values = [5,5], iterations = 500, list_of_functions = [func_1, func_2], mutation_rate = 0.1, eta = 3, eps = 5, k = 5, verbose = True):    
+def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_values = [-5,-5], max_values = [5,5], iterations = 500, list_of_functions = [func_1, func_2], mutation_rate = 0.1, eta = 3, verbose = True):    
     count    = 0
     M        = len(list_of_functions)
     position = initial_position(swarm_size, min_values, max_values, list_of_functions)
-    archive  = initial_position(swarm_size, min_values, max_values, list_of_functions)
     velocity = initial_position(swarm_size, min_values, max_values, list_of_functions)
     leaders  = initial_position(swarm_size, min_values, max_values, list_of_functions)
     eps_dom  = initial_position(swarm_size, min_values, max_values, list_of_functions)
@@ -233,17 +178,20 @@ def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_val
         if (verbose == True):
             print('Generation = ', count)
         position = mutation(position, mutation_rate, eta, min_values, max_values, list_of_functions)
-        archive  = selection(swarm_size, position, archive, M)
         velocity = velocity_vector(position, leaders, min_values, max_values, list_of_functions) 
-        leaders  = selection_leaders(swarm_size, M, leaders, velocity, archive, position)
-        eps_dom  = selection_eps_dominance(eps_dom, np.vstack([position, velocity, archive, leaders]), M, eps)
-        if (eps_dom.shape[0] > k*swarm_size):
-            rank     = fast_non_dominated_sorting(eps_dom, M)
-            idx      = np.where(rank == 1)[0]
-            if (len(idx) > 1):
-                eps_dom = eps_dom[idx, :]
-            eps_dom = eps_dom[:k*swarm_size, :]
-        count    = count + 1 
+        leaders  = selection_leaders(swarm_size, M, leaders, velocity, position)
+        eps_dom  = selection_dominance(eps_dom, np.vstack([position, velocity, leaders]), M)
+        if (eps_dom.shape[0] > swarm_size):
+            crowding = crowding_distance_function(eps_dom, M)
+            arg      = np.argsort(crowding , axis = 0)[::-1].tolist()
+            try:
+                arg = [i[0] for i in arg ]
+            except:
+                arg = [i for i in arg ]
+            if (len(arg) > 0):
+                eps_dom = eps_dom[arg, :]
+            eps_dom = eps_dom[:swarm_size, :]
+        count = count + 1 
     if (len(eps_dom) == 0):
         return leaders
     else:
