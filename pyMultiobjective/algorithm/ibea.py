@@ -7,7 +7,7 @@
 # Lesson: IBEA
 
 # Citation: 
-# PEREIRA, V. (2021). Project: pyMultiojective, File: ibea.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
+# PEREIRA, V. (2022). Project: pyMultiojective, File: ibea.py, GitHub repository: <https://github.com/Valdecy/pyMultiojective>
 
 ############################################################################
 
@@ -98,50 +98,30 @@ def mutation(offspring, mutation_rate = 0.1, eta = 1, min_values = [-5,-5], max_
 
 ############################################################################
 
-# Function: Fast Non-Dominated Sorting
-def fast_non_dominated_sorting(population, number_of_functions = 2):
-    S     = [[] for i in range(0, population.shape[0])]
-    front = [[]]
-    n     = [0 for i in range(0, population.shape[0])]
-    rank  = [0 for i in range(0, population.shape[0])]
-    for p in range(0, population.shape[0]):
-        S[p] = []
-        n[p] = 0
-        for q in range(0, population.shape[0]):
-            if ((population[p,-number_of_functions:] <= population[q,-number_of_functions:]).all()):
-                if (q not in S[p]):
-                    S[p].append(q)
-            elif ((population[q,-number_of_functions:] <= population[p,-number_of_functions:]).all()):
-                n[p] = n[p] + 1
-        if (n[p] == 0):
-            rank[p] = 0
-            if (p not in front[0]):
-                front[0].append(p)
-    i = 0
-    while (front[i] != []):
-        Q = []
-        for p in front[i]:
-            for q in S[p]:
-                n[q] = n[q] - 1
-                if(n[q] == 0):
-                    rank[q] = i+1
-                    if q not in Q:
-                        Q.append(q)
-        i = i+1
-        front.append(Q)
-    del front[len(front)-1]
-    rank = np.zeros((population.shape[0], 1))
-    for i in range(0, len(front)):
-        for j in range(0, len(front[i])):
-            rank[front[i][j], 0] = i + 1
-    return rank
-
-# Function: Sort Population by Rank
-def sort_population_by_rank(population, rank):
-    idx        = np.argsort(rank[:,0], axis = 0).tolist()
-    rank       = rank[idx,:]
-    population = population[idx,:]
-    return population, rank
+# Function:  Pareto Front  
+def pareto_front_points(pts, pf_min = True):
+    def pareto_front(pts, pf_min):
+        pf = np.zeros(pts.shape[0], dtype = np.bool_)
+        for i in range(0, pts.shape[0]):
+            cost = pts[i, :]
+            if (pf_min == True):
+                g_cost = np.logical_not(np.any(pts > cost, axis = 1))
+                b_cost = np.any(pts < cost, axis = 1)
+            else:
+                g_cost = np.logical_not(np.any(pts < cost, axis = 1))
+                b_cost = np.any(pts > cost, axis = 1)
+            dominated = np.logical_and(g_cost, b_cost)
+            if  (np.any(pf) == True):
+                if (np.any(np.all(pts[pf] == cost, axis = 1)) == True):
+                    continue
+            if not (np.any(dominated[:i]) == True or np.any(dominated[i + 1 :]) == True):
+                pf[i] = True
+        return pf
+    idx     = np.argsort(((pts - pts.mean(axis = 0))/(pts.std(axis = 0) + 1e-7)).sum(axis = 1))
+    pts     = pts[idx]
+    pf      = pareto_front(pts, pf_min)
+    pf[idx] = pf.copy()
+    return pf
 
 ############################################################################
 
@@ -174,11 +154,9 @@ def indicator_based_evolutionary_algorithm(population_size = 5, mutation_rate = 
         z_max      = np.vstack([z_max, np.max(population[:,-M:], axis = 0)])
         z_max      = np.max(z_max, axis = 0)
         population = selection(population, population_size, M, z_min, z_max)
+        idx        = pareto_front_points(population [:, -M:], pf_min = True)
+        population = population [idx,:]
         count      = count + 1  
-    rank             = fast_non_dominated_sorting(population, number_of_functions = M)
-    population, rank = sort_population_by_rank(population, rank) 
-    idx              = np.where(rank <= 1)[0].tolist()
-    population       = population[idx, :]
     return population
 
 ############################################################################
