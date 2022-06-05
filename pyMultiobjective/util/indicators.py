@@ -26,7 +26,7 @@ from scipy import spatial
     # IGD         (https://doi.org/10.1007/978-3-540-24694-7_71)
     # IGD+        (https://doi.org/10.1007/978-3-319-15892-1_8)
     # MS          (https://doi.org/10.1162/106365600568202)
-    # SP          (https://doi.org/10.1145/1143997.1144005)
+    # SP          (https://doi.org/10.1109/TEVC.2006.882428)
     # Hypervolume (https://scholar.afit.edu/cgi/viewcontent.cgi?article=6130&context=etd)
     
 ############################################################################
