@@ -25,7 +25,9 @@ from scipy import spatial
     # GD+         (https://doi.org/10.1007/978-3-319-15892-1_8)
     # IGD         (https://doi.org/10.1007/978-3-540-24694-7_71)
     # IGD+        (https://doi.org/10.1007/978-3-319-15892-1_8)
-    # Hypervolume (https://doi.org/10.1109/CEC.2006.1688440)
+    # MS          (https://doi.org/10.1162/106365600568202)
+    # SP          (https://doi.org/10.1145/1143997.1144005)
+    # Hypervolume (https://scholar.afit.edu/cgi/viewcontent.cgi?article=6130&context=etd)
     
 ############################################################################
 
@@ -158,14 +160,66 @@ def igd_plus_indicator(min_values = [-5, -5], max_values = [5, 5], list_of_funct
 
 ############################################################################
 
-# Hypervolume
+# MS - Maximum Spread
+
+# Function:  Maximum Spread
+def ms_indicator(min_values = [-5, -5], max_values = [5, 5], list_of_functions = [], step = [0.1, 0.1], solution = [], custom_pf = [], pf_min = True):
+    if (solution.shape[1] > len(min_values)):
+        sol = solution[:,len(min_values):]
+    elif (solution.shape[1] == len(min_values)):
+        sol = np.copy(solution)
+    if (len(custom_pf) > 0):
+        front = np.copy(custom_pf)
+    else:
+        front = generate_points(min_values, max_values, list_of_functions, step, pf_min)
+        pf    = pareto_front_points(pts = front[:,len(min_values):], pf_min = pf_min)
+        front = front[pf, len(min_values):]
+    s_max = np.max(sol, axis = 0)
+    s_min = np.min(sol, axis = 0)
+    f_max = np.max(front, axis = 0)
+    f_min = np.min(front, axis = 0)
+    ms = 0
+    for i in range(0, len(list_of_functions)):
+        ms = ms + ((min(s_max[i], f_max[i]) - max(s_min[i], f_min[i]))/(f_max[i] - f_min[i]))**2
+    ms = np.sqrt(ms/len(list_of_functions))
+    return ms
+
+# SP - Spacing
+
+# Function:  Spacing
+def sp_indicator(min_values = [-5, -5], max_values = [5, 5], list_of_functions = [], step = [0.1, 0.1], solution = [], custom_pf = [], pf_min = True):
+    if (solution.shape[1] > len(min_values)):
+        sol = solution[:,len(min_values):]
+    elif (solution.shape[1] == len(min_values)):
+        sol = np.copy(solution)
+    if (len(custom_pf) > 0):
+        front = np.copy(custom_pf)
+    else:
+        front = generate_points(min_values, max_values, list_of_functions, step, pf_min)
+        pf    = pareto_front_points(pts = front[:,len(min_values):], pf_min = pf_min)
+        front = front[pf, len(min_values):]
+    dm = np.zeros(sol.shape[0])
+    for i in range(0, sol.shape[0]):
+        dm[i] = min([np.linalg.norm(sol[i] - front[j]) for j in range(0, front.shape[0]) if i != j])
+    d_mean  = np.mean(dm)
+    spacing = np.sqrt(np.sum((dm - d_mean)**2)/front.shape[0])
+    return spacing
+
+############################################################################
+
+# Hypervolume (S-Metric)
 
 # Function: Hypervolume
-def hv_indicator(solution = [], n_objs = 3, ref_point = []):
+def hv_indicator(solution = [], n_objs = 3, ref_point = [], normalize = False):
     if (solution.shape[1] > n_objs):
         sol = solution[:,-n_objs:]
     elif (solution.shape[1] == n_objs):
         sol = np.copy(solution)
+    if (normalize == True):
+        z_min     = np.min(sol, axis = 0)
+        z_max     = np.max(sol, axis = 0)
+        sol       = np.clip((sol - z_min)/(z_max - z_min + 0.000000001), 0, 1)
+        ref_point = [1]*n_objs
     if (len(ref_point) == 0):
         ref_point = [np.max(sol[:,j]) for j in range(0, sol.shape[1])]
     else:
@@ -175,11 +229,10 @@ def hv_indicator(solution = [], n_objs = 3, ref_point = []):
                 print('Correcting Position', j, '; Reference Point Value', ref_point[j], 'was changed to', np.max(sol[:,j]))
                 print('')
                 ref_point[j] = np.max(sol[:,j])
-        print('Used Reference Point: ', ref_point)
+        print('Used Reference Point: ', ref_point, '; Normalization Procedure: ', normalize)
         print('')
     hv_c = pg.hypervolume(sol)
     hv   = hv_c.compute(ref_point)
     return hv
 
 ############################################################################
-
