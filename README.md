@@ -84,7 +84,7 @@ parameters = {
 }
 graphs.andrews_plot(list_of_functions = [dent_f1, dent_f2], **parameters)
 
-# Import Performance Indicators. Available Performance Indicators: GD, GD+, IGD, IGD+, Hypervolume
+# Import Performance Indicators. Available Performance Indicators: GD, GD+, IGD, IGD+, Maximum Spread, Spacing and Hypervolume
 from pyMultiobjective.utils import indicators
 
 parameters = {
@@ -99,11 +99,15 @@ gd   = indicators.gd_indicator(list_of_functions = [dent_f1, dent_f2], **paramet
 gdp  = indicators.gd_plus_indicator(list_of_functions = [dent_f1, dent_f2], **parameters)
 igd  = indicators.igd_indicator(list_of_functions = [dent_f1, dent_f2], **parameters)
 igdp = indicators.igd_plus_indicator(list_of_functions = [dent_f1, dent_f2], **parameters)
+ms   = indicators.ms_indicator(list_of_functions = [dent_f1, dent_f2], **parameters)
+sp   = indicators.sp_indicator(list_of_functions = [dent_f1, dent_f2], **parameters)
 
 print('GD   = ', gd)
 print('GDP  = ', gdp)
 print('IGD  = ', igd)
 print('IGDP = ', igdp)
+print('MS   = ', ms)
+print('SP   = ', sp)
 
 
 parameters = {
@@ -139,6 +143,10 @@ Try it in **Colab**:
 4. Test Functions
 
 - Test Functions with various types of visualizations: Scatter (2D, 3D or ND), Parallel (2D, 3D or ND), Andrews (2D, 3D or ND), Radar (3D or ND) and Complex Radar Plots (3D or ND) ([ Colab Demo ](https://colab.research.google.com/drive/1ALVZp333yO6rPEcR0fhVQn-PJeH5PmGP?usp=sharing)) 
+
+5. Peformance Indicators
+
+- Available Performance Indicators: GD, GD+, IGD, IGD+, Maximum Spread, Spacing and Hypervolume
 
 # Single Objective Optimization
 For Single Objective Optimization try [pyMetaheuristic](https://github.com/Valdecy/pyMetaheuristic). 
