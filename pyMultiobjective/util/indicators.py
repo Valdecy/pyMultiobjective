@@ -192,17 +192,11 @@ def sp_indicator(min_values = [-5, -5], max_values = [5, 5], list_of_functions =
         sol = solution[:,len(min_values):]
     elif (solution.shape[1] == len(min_values)):
         sol = np.copy(solution)
-    if (len(custom_pf) > 0):
-        front = np.copy(custom_pf)
-    else:
-        front = generate_points(min_values, max_values, list_of_functions, step, pf_min)
-        pf    = pareto_front_points(pts = front[:,len(min_values):], pf_min = pf_min)
-        front = front[pf, len(min_values):]
     dm = np.zeros(sol.shape[0])
     for i in range(0, sol.shape[0]):
-        dm[i] = min([np.linalg.norm(sol[i] - front[j]) for j in range(0, front.shape[0]) if i != j])
+        dm[i] = min([np.linalg.norm(sol[i] - sol[j]) for j in range(0, sol.shape[0]) if i != j])
     d_mean  = np.mean(dm)
-    spacing = np.sqrt(np.sum((dm - d_mean)**2)/front.shape[0])
+    spacing = np.sqrt(np.sum((dm - d_mean)**2)/sol.shape[0])
     return spacing
 
 ############################################################################
