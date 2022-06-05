@@ -58,7 +58,27 @@ def velocity_vector(position, leaders, min_values = [-5,-5], max_values = [5,5],
             vel_[i,-k] = list_of_functions[-k](list(vel_[i,0:vel_.shape[1]-len(list_of_functions)]))
     return vel_
 
+# Function: Update Position
+def update_position(position, velocity, M):
+    for i in range(0, position.shape[0]):
+        if (dominance_function(solution_1 = position[i,:], solution_2 = velocity[i,:], number_of_functions = M) == False):
+            position[i, :] = np.copy(velocity[i,:])
+    return position
+
 ############################################################################
+
+# Function: Dominance
+def dominance_function(solution_1, solution_2, number_of_functions = 2):
+    count     = 0
+    dominance = True
+    for k in range (1, number_of_functions + 1):
+        if (solution_1[-k] <= solution_2[-k]):
+            count = count + 1
+    if (count == number_of_functions):
+        dominance = True
+    else:
+        dominance = False       
+    return dominance
 
 # Function: Crowding Distance (Adapted from PYMOO)
 def crowding_distance_function(pop, M):
@@ -177,6 +197,7 @@ def optimized_multiobjective_particle_swarm_optimization(swarm_size = 5, min_val
     while (count <= iterations):
         if (verbose == True):
             print('Generation = ', count)
+        position = update_position(position, velocity, M)
         position = mutation(position, mutation_rate, eta, min_values, max_values, list_of_functions)
         velocity = velocity_vector(position, leaders, min_values, max_values, list_of_functions) 
         leaders  = selection_leaders(swarm_size, M, leaders, velocity, position)
