@@ -2,11 +2,12 @@
 
 ## Introduction
 
-A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **C-NSGA II** (Clustered Non-Dominated Sorting Genetic Algorithm II); **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **GrEA** (Grid-based Evolutionary Algorithm); **IBEA-FC** (Indicator-Based Evolutionary Algorithm) with Fast Comparison Indicator; **IBEA-HV** (Indicator-Based Evolutionary Algorithm) with Hypervolume Indicator; **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NAEMO** (Neighborhood-sensitive Archived Evolutionary Many-objective Optimization); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting); **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III).
+A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **C-NSGA II** (Clustered Non-Dominated Sorting Genetic Algorithm II); **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **GrEA** (Grid-based Evolutionary Algorithm); **IBEA-FC** (Indicator-Based Evolutionary Algorithm with Fast Comparison Indicator); **IBEA-HV** (Indicator-Based Evolutionary Algorithm with Hypervolume Indicator); **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NAEMO** (Neighborhood-sensitive Archived Evolutionary Many-objective Optimization); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting); **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III).
 
 ## USAGE
 
 1. Install
+
 ```bash
 pip install pyMultiobjective
 ```
@@ -18,7 +19,7 @@ pip install pyMultiobjective
 # Import NSGA III
 from pyMultiobjective.algorithm import non_dominated_sorting_genetic_algorithm_III
 
-# Import Test Functions. Available Test Functions: Dent, DTLZ2, Fonseca-Fleming, Kursawe, Poloni, Schaffer1, Schaffer2, ZDT1, ZDT2, ZDT3, ZDT4, Viennet 
+# Import Test Functions. Available Test Functions: Dent, DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7, Fonseca-Fleming, Kursawe, Poloni, Schaffer1, Schaffer2, ZDT1, ZDT2, ZDT3, ZDT4, ZDT6, Viennet1, Viennet2, Viennet3 
 from pyMultiobjective.test_functions import dent_f1, dent_f2
 
 # OR Define your Own Custom Function. The function input should be a list of values, 
@@ -140,16 +141,44 @@ Try it in **Colab**:
 - SPEA2 ([ Colab Demo ](https://colab.research.google.com/drive/1OrxJxxAMSpKu_xSWc9UQlPOeM_mmVHmW?usp=sharing)) ( [ Original Paper ](https://kdd.cs.ksu.edu/Courses/CIS830/Handouts/P8.pdf))
 - U-NSGA III ([ Colab Demo ](https://colab.research.google.com/drive/1-AO_S6OlqzbA54DlMFBDGEL-wHh9hayH?usp=sharing)) ( [ Original Paper ](https://www.egr.msu.edu/~kdeb/papers/c2014022.pdf))
 
-4. Test Functions
+4. Test Functions: 
+
+- Dent ( [ Paper ](https://doi.org/10.1007/978-3-319-44003-3_12)) ( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Dent.txt) )
+- DTLZ1 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ1.txt) )
+- DTLZ2 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ2.txt) )
+- DTLZ3 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ3.txt) )
+- DTLZ4 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ4.txt) )
+- DTLZ5 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ5.txt) )
+- DTLZ6 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ6.txt) )
+- DTLZ7 ( [ Paper ](https://doi.org/10.1109/CEC.2002.1007032))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/DTLZ7.txt) )
+- Fonseca-Fleming ( [ Paper ](https://doi.org/10.1162/evco.1995.3.1.1))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Fonseca_Fleming.txt) )
+- Kursawe ( [ Paper ](https://doi.org/10.1007/BFb0029752))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Kursawe.txt) )
+- Poloni ( [ Paper ](https://www.researchgate.net/publication/243686783_Hybrid_GA_for_multi_objective_aerodynamic_shape_optimization))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Poloni.txt) )
+- Schaffer1 ( [ Paper ](https://www.researchgate.net/publication/236443691_Some_Experiments_in_Machine_Learning_Using_Vector_Evaluated_Genetic_Algorithms))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Schaffer1.txt) )
+- Schaffer2 ( [ Paper ](https://www.researchgate.net/publication/236443691_Some_Experiments_in_Machine_Learning_Using_Vector_Evaluated_Genetic_Algorithms))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Schaffer2.txt) )
+- ZDT1 ( [ Paper ](https://doi.org/10.1162/106365600568202))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/ZDT1.txt) )
+- ZDT2 ( [ Paper ](https://doi.org/10.1162/106365600568202))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/ZDT2.txt) )
+- ZDT3 ( [ Paper ](https://doi.org/10.1162/106365600568202))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/ZDT3.txt) )
+- ZDT4 ( [ Paper ](https://doi.org/10.1162/106365600568202))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/ZDT4.txt) ) 
+- ZDT6 ( [ Paper ](https://doi.org/10.1162/106365600568202))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/ZDT6.txt) )
+- Viennet1 ( [ Paper ](https://doi.org/10.1080/00207729608929211))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet1.txt) )
+- Viennet2 ( [ Paper ](https://doi.org/10.1080/00207729608929211))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet2.txt) )
+- Viennet3 ( [ Paper ](https://doi.org/10.1080/00207729608929211))( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet3.txt) )
 
 - Test Functions with various types of visualizations: Scatter (2D, 3D or ND), Parallel (2D, 3D or ND), Andrews (2D, 3D or ND), Radar (3D or ND) and Complex Radar Plots (3D or ND) ([ Colab Demo ](https://colab.research.google.com/drive/1ALVZp333yO6rPEcR0fhVQn-PJeH5PmGP?usp=sharing)) 
 
-5. Peformance Indicators
+5. Peformance Indicators:
 
-- Available Performance Indicators: GD, GD+, IGD, IGD+, Maximum Spread, Spacing and Hypervolume
+- GD ( [ Paper ](https://apps.dtic.mil/sti/pdfs/ADA364478.pdf))
+- GD+ ( [ Paper ](https://doi.org/10.1007/978-3-319-15892-1_8))
+- IGD ( [ Paper ](https://doi.org/10.1007/978-3-540-24694-7_71))
+- IGD+ ( [ Paper ](https://doi.org/10.1007/978-3-319-15892-1_8))
+- Maximum Spread ( [ Paper ](https://doi.org/10.1162/106365600568202))
+- Spacing ( [ Paper ](https://doi.org/10.1109/TEVC.2006.882428))
+- Hypervolume ( [ Paper ](https://scholar.afit.edu/cgi/viewcontent.cgi?article=6130&context=etd))
 
 # Single Objective Optimization
-For Single Objective Optimization try [pyMetaheuristic](https://github.com/Valdecy/pyMetaheuristic). 
+For Single Objective Optimization try [pyMetaheuristic](https://github.com/Valdecy/pyMetaheuristic)
 
 # Acknowledgement 
 This section is dedicated to all the people that helped to improve or correct the code. Thank you very much!
