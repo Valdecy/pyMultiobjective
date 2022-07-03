@@ -120,7 +120,7 @@ print('Hypervolume = ', hypervolume)
 ```
 
 3. Try it in **Colab**
-- C-NSGA II ([ Colab Demo ](https://colab.research.google.com/drive/1sXxCWV6dDmNXmes7RDka4OqKOtM0t9YX?usp=sharing)) ( [ Original Paper ]())
+- C-NSGA II ([ Colab Demo ](https://colab.research.google.com/drive/1sXxCWV6dDmNXmes7RDka4OqKOtM0t9YX?usp=sharing)) ( [ Original Paper ](https://open.metu.edu.tr/bitstream/handle/11511/69040/12625931.pdf))
 - CTAEA ([ Colab Demo ](https://colab.research.google.com/drive/1IC5m7JfmhT0ihWBhziQdfyq1PAHrmW1p?usp=sharing)) ( [ Original Paper ](https://doi.org/10.48550/arXiv.2103.06382))
 - GrEA ([ Colab Demo ](https://colab.research.google.com/drive/1H2w77kCGUj33qI7uIE-e68999zy1L8tf?usp=sharing)) ( [ Original Paper ](https://doi.org/10.1109/TEVC.2012.2227145))
 - IBEA-FC ([ Colab Demo ](https://colab.research.google.com/drive/1BBD0nWaE5SqL5n2Jpa_fDYgkWGSpy8xu?usp=sharing)) ( [ Original Paper ](https://www.simonkuenzli.ch/docs/ZK04.pdf))
