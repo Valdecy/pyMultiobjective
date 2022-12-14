@@ -160,7 +160,6 @@ print('Hypervolume = ', hypervolume)
 - Viennet1 ( [ Paper ](https://doi.org/10.1080/00207729608929211)) ( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet1.txt) )
 - Viennet2 ( [ Paper ](https://doi.org/10.1080/00207729608929211)) ( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet2.txt) )
 - Viennet3 ( [ Paper ](https://doi.org/10.1080/00207729608929211)) ( [Pareto Front](https://github.com/Valdecy/Datasets/raw/master/Pareto%20Front/Viennet3.txt) )
-
 - Test Functions with various types of visualizations: Scatter (2D, 3D or ND), Parallel (2D, 3D or ND), Andrews (2D, 3D or ND), Radar (3D or ND) and Complex Radar Plots (3D or ND) ([ Colab Demo ](https://colab.research.google.com/drive/1ALVZp333yO6rPEcR0fhVQn-PJeH5PmGP?usp=sharing)) 
 
 5. Peformance Indicators
