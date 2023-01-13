@@ -174,6 +174,9 @@ print('Hypervolume = ', hypervolume)
 # Single Objective Optimization
 For Single Objective Optimization try [pyMetaheuristic](https://github.com/Valdecy/pyMetaheuristic)
 
+# TSP (Travelling Salesman Problem)
+For Travelling Salesman Problems try [pyCombinatorial](https://github.com/Valdecy/pyCombinatorial)
+
 # Acknowledgement 
 This section is dedicated to all the people that helped to improve or correct the code. Thank you very much!
 
