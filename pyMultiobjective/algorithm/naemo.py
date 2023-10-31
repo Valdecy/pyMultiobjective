@@ -130,9 +130,9 @@ def breeding(archive, min_values = [-5,-5], max_values = [5,5], list_of_function
                         b_offspring = 1/(2*(1 - rand_b))
                         b_offspring = b_offspring**(1/(mu + 1))       
                     if (rand_c >= 0.5):
-                        offspring[i,j] = np.clip(((1 + b_offspring)*archive[parent_1, j] + (1 - b_offspring)*archive[parent_2, j])/2, min_values[j], max_values[j])           
+                        offspring[i,j] = np.clip(((1 + b_offspring)*archive[parent_1][0][j] + (1 - b_offspring)*archive[parent_2][0][j])/2, min_values[j], max_values[j])           
                     else:   
-                        offspring[i,j] = np.clip(((1 - b_offspring)*archive[parent_1, j] + (1 + b_offspring)*archive[parent_2, j])/2, min_values[j], max_values[j])          
+                        offspring[i,j] = np.clip(((1 - b_offspring)*archive[parent_1][0][j] + (1 + b_offspring)*archive[parent_2][0][j])/2, min_values[j], max_values[j])          
                 elif (i1 == i2 and j in dim):
                     eta    = np.random.normal(0, 0.1, 1)[0]
                     rand   = int.from_bytes(os.urandom(8), byteorder = 'big') / ((1 << 64) - 1)
