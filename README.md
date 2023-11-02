@@ -4,7 +4,7 @@
 
 A python library for the following Multiobjective Optimization Algorithms or Many Objectives Optimization Algorithms: **C-NSGA II** (Clustered Non-Dominated Sorting Genetic Algorithm II); **CTAEA** (Constrained Two Archive Evolutionary Algorithm); **GrEA** (Grid-based Evolutionary Algorithm); **HypE** (Hypervolume Estimation Multiobjective Optimization Algorithm); **IBEA-FC** (Indicator-Based Evolutionary Algorithm with Fast Comparison Indicator); **IBEA-HV** (Indicator-Based Evolutionary Algorithm with Hypervolume Indicator); **MOEA/D** (Multiobjective Evolutionary Algorithm Based on Decomposition); **NAEMO** (Neighborhood-sensitive Archived Evolutionary Many-objective Optimization); **NSGA II** (Non-Dominated Sorting Genetic Algorithm II);  **NSGA III** (Non-Dominated Sorting Genetic Algorithm III); **OMOPSO** (Optimized Multiobjective Particle Swarm Optimization); **PAES** (Pareto Archived Evolution Strategy) with Fast Non-Dominance Sorting); **RVEA** (Reference Vector Guided Evolutionary Algorithm); **SMPSO** (Speed-Constrained Multiobjective Particle Swarm Optimization); **SMS-EMOA** (S-Metric Selection Evolutionary Multiobjective Optimization Algorithm); **SPEA2** (Strength Pareto Evolutionary Algorithm 2);  **U-NSGA III** (Unified Non-Dominated Sorting Genetic Algorithm III).
 
-## USAGE
+## Usage
 
 1. Install
 ```bash
