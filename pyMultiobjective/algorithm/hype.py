@@ -120,9 +120,23 @@ def reference_points(M, p):
     return ref_points
 
 # Function: Normalize Objective Functions
-def normalization(population, z_min, z_max, number_of_functions):
+def normalization(population, number_of_functions):
     M                 = number_of_functions
-    population[:,-M:] = np.clip(population[:,-M:] /(z_max - z_min + 0.00000000000000001), 0, 1)
+    z_min             = np.min(population[:,-M:], axis = 0)
+    population[:,-M:] = population[:,-M:] - z_min
+    w                 = np.zeros((M, M)) + 0.0000001
+    np.fill_diagonal(w, 1)
+    z_max             = []
+    for i in range(0, M):
+       z_max.append(np.argmin(np.max(population[:,-M:]/w[i], axis = 1)))
+    if ( len(z_max) != len(set(z_max)) or M == 1):
+        a     = np.max(population[:,-M:], axis = 0)
+    else:
+        k     = np.ones((M, 1))
+        z_max = np.vstack((population[z_max,-M:]))
+        a     = np.matrix.dot(np.linalg.inv(z_max), k)
+        a     = (1/a).reshape(1, M)
+    population[:,-M:] = population[:,-M:] /(a - z_min)
     return population
 
 # Function: Distance from Point (p3) to a Line (p1, p2).    
@@ -136,9 +150,10 @@ def point_to_line(p1, p2, p3):
     return dl
 
 # Function: Association
-def association(srp, population, z_min, z_max, M):
+def association(srp, population, z_max, number_of_functions):
+    M    = number_of_functions
     p    = copy.deepcopy(population)
-    p    = normalization(p, z_min, z_max, M)
+    p    = normalization(p, M)
     p1   = np.zeros((1, M))
     p2   = srp
     p3   = p[:,-M:]
@@ -146,8 +161,11 @@ def association(srp, population, z_min, z_max, M):
     idx  = []
     arg  = np.argmin(g, axis = 1)
     hv_c = pg.hypervolume(p[:,-M:])
-    hv   = hv_c.contributions([1.05]*M)
-    d    = 1/(hv + 0.00000000000000001)
+    z    = np.max(p[:,-M:], axis = 0)
+    if any(z > z_max):
+        z_max = np.maximum(z_max,z)
+    hv   = hv_c.contributions(z_max)
+    d    = 1/(hv + 0.0000000000000001)
     for ind in np.unique(arg).tolist():
         f = [i[0] for i in np.argwhere(arg == ind).tolist()]
         idx.append(f[d[f].argsort()[0]])
@@ -167,18 +185,15 @@ def hypervolume_estimation_mooa(references = 5, mutation_rate = 0.1, min_values 
     size       = k*srp.shape[0]
     population = initial_population(size, min_values, max_values, list_of_functions)  
     offspring  = initial_population(size, min_values, max_values, list_of_functions)  
-    z_min      = np.min(population[:,-M:], axis = 0)
     z_max      = np.max(population[:,-M:], axis = 0)
     print('Total Number of Points on Reference Hyperplane: ', int(srp.shape[0]), ' Population Size: ', int(size))
     while (count <= generations):       
         if (verbose == True):
             print('Generation = ', count)
         population = np.vstack([population, offspring])
-        z_min      = np.vstack([z_min, np.min(population[:,-M:], axis = 0)])
-        z_min      = np.min(z_min, axis = 0)
         z_max      = np.vstack([z_max, np.max(population[:,-M:], axis = 0)])
         z_max      = np.max(z_max, axis = 0)
-        idx        = association(srp, population, z_min, z_max, M)
+        idx        = association(srp, population, z_max, M)
         population = population[idx, :]
         population = population[:size,:]
         offspring  = breeding(population, min_values, max_values, mu, list_of_functions, size)
