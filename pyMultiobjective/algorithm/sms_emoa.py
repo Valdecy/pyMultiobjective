@@ -211,6 +211,9 @@ def association(srp, population, z_max, number_of_functions):
     idx  = []
     arg  = np.argmin(g, axis = 1)
     hv_c = pg.hypervolume(p[:,-M:])
+    z    = np.max(p[:,-M:], axis = 0)
+    if any(z > z_max):
+        z_max = np.maximum(z_max,z)
     hv   = hv_c.contributions(z_max)
     d    = 1/(hv + 0.0000000000000001)
     for ind in np.unique(arg).tolist():
