@@ -84,7 +84,7 @@ parameters = {
 graphs.andrews_plot(list_of_functions = [dent_f1, dent_f2], **parameters)
 
 # Import Performance Indicators. Available Performance Indicators: GD, GD+, IGD, IGD+, Maximum Spread, Spacing and Hypervolume
-from pyMultiobjective.utils import indicators
+from pyMultiobjective.util import indicators
 
 parameters = {
 	'min_values': (-5, -5), 
